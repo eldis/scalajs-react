@@ -29,7 +29,21 @@ package object react {
   // Initialize dependencies
   Dependencies.setup
 
-  val React = impl.React
+  type ReactNode = impl.ReactNode
+  type ReactDOMElement = impl.ReactDOMElement
+
+  object React {
+    @inline def createElement(
+      tag: String,
+      props: js.UndefOr[js.Object],
+      children: ReactNode*
+    ): ReactDOMElement =
+      impl.React.createElement(
+        tag,
+        props.asInstanceOf[js.Object],
+        children: _*
+      )
+  }
   val ReactDOM = impl.ReactDOM
 
 }

@@ -10,7 +10,7 @@ object Main extends js.JSApp {
     ReactDOM.render(
       React.createElement(
         "p",
-        js.undefined.asInstanceOf[js.Object],
+        js.undefined,
         "Hello, world!"
       ),
       dom.document.getElementById("root")
