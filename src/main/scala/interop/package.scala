@@ -47,6 +47,12 @@ package object interop {
       children: ReactNode*
     ): ReactDOMElement = js.native
 
+    def createElement[P <: js.Any](
+      c: js.Dynamic,
+      props: P,
+      children: ReactNode*
+    ): ReactDOMElement = js.native
+
   }
 
   @JSImport("react", JSImport.Namespace)

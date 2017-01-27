@@ -100,7 +100,7 @@ object ScalaJSReact {
 
   object Projects {
 
-    lazy val scalaJs = project.in(file("."))
+    lazy val scalaJsReact = project.in(file("."))
       .configure(
         Settings.scalajsProject, Settings.jsBundler, Settings.publish, Settings.react(true)
       )
@@ -114,7 +114,7 @@ object ScalaJSReact {
           "simple",
           useReact = true)
       )
-      .dependsOn(scalaJs)
+      .dependsOn(scalaJsReact)
 
   }
 
