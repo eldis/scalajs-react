@@ -17,17 +17,20 @@ object FunctionalComponent {
   }
 
   def apply[P <: js.Any](f: Function1[P, Result]): FunctionalComponent[P] =
-    (f: js.Function1[P, Result]).asInstanceOf[FunctionalComponent[P]]
+    apply("FunctionalComponent")(f)
 
   @js.native
   trait WithChildren[-P <: js.Any] extends js.Any
 
   def withChildren[P <: js.Any](name: String)(f: Function2[P, PropsChildren, Result]): WithChildren[P] = {
-    var jf = f: js.Function2[P, PropsChildren, Result]
-    jf.asInstanceOf[js.Dynamic].displayName = name
-    jf.asInstanceOf[WithChildren[P]]
+    var proxy = ((p: P) => {
+      val children = p.asInstanceOf[js.Dynamic].children.asInstanceOf[PropsChildren]
+      f(p, if (js.Array.isArray(children)) children else js.Array(children.asInstanceOf[ReactNode]))
+    }): js.Function1[P, Result]
+    proxy.asInstanceOf[js.Dynamic].displayName = name
+    proxy.asInstanceOf[WithChildren[P]]
   }
 
   def withChildren[P <: js.Any](f: Function2[P, PropsChildren, Result]): WithChildren[P] =
-    (f: js.Function2[P, PropsChildren, Result]).asInstanceOf[WithChildren[P]]
+    withChildren("FunctionalComponent")(f)
 }
