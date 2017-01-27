@@ -23,7 +23,7 @@ object Stateless {
     React.createElement(
       "div",
       js.undefined,
-      React.createElement(simpleComponent, p),
+      simpleComponent(p),
       ch
     )
   }

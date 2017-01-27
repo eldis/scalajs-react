@@ -9,7 +9,6 @@ package object interop {
   @js.native
   trait ReactNode extends js.Object
 
-  /** ReactElement = ReactComponentElement | ReactDOMElement  */
   @js.native
   trait ReactElement extends js.Object with ReactNode {
     def key: js.UndefOr[String] = js.native
