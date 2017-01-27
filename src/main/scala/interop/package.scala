@@ -71,5 +71,6 @@ package object interop {
 
   // Implicits
   @inline implicit def reactNodeFromString(s: String) = s.asInstanceOf[ReactNode]
+  @inline implicit def reactNodeFromNodeArray(a: js.Array[ReactNode]) = a.asInstanceOf[ReactNode]
 
 }

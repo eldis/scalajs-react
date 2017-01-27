@@ -19,11 +19,12 @@ object Stateless {
     React.createElement("p", js.undefined, p.message)
   }
 
-  val simpleComponentWithChildren = FunctionalComponent.withChildren { (p: SimpleComponentProp, ch: PropsChildren) =>
+  val simpleComponentWithChildren = FunctionalComponent.withChildren("simpleComponentWithChildren") { (p: SimpleComponentProp, ch: PropsChildren) =>
     React.createElement(
       "div",
       js.undefined,
-      (React.createElement(simpleComponent, p) :: ch.toList): _*
+      React.createElement(simpleComponent, p),
+      ch
     )
   }
 
