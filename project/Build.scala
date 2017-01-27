@@ -12,6 +12,7 @@ object ScalaJSReact {
     val scalaJsReact = "0.11.3"
 
     val scalatest = "3.0.1"
+    val circe = "0.7.0"
   }
 
   object JsVersions {
@@ -23,6 +24,7 @@ object ScalaJSReact {
 
   object Dependencies {
     lazy val scalaJsReact = "com.github.japgolly.scalajs-react" %%%! "core" % Versions.scalaJsReact
+
 
     lazy val scalatest = "org.scalatest" %%%! "scalatest" % Versions.scalatest % "test"
 
@@ -105,13 +107,27 @@ object ScalaJSReact {
         Settings.scalajsProject, Settings.jsBundler, Settings.publish, Settings.react(true)
       )
       .settings(
-        name := "scalajs-react"
+        name := "scalajs-react",
+        libraryDependencies ++= Seq(
+          "io.circe" %%% "circe-core" % Versions.circe,
+          "io.circe" %%% "circe-generic" % Versions.circe,
+          "io.circe" %%% "circe-parser" % Versions.circe,
+          "io.circe" %%% "circe-scalajs" % Versions.circe
+        )
       )
 
     lazy val exSimple = project
       .configure(
         Settings.exampleProject(
           "simple",
+          useReact = true)
+      )
+      .dependsOn(scalaJs)
+
+    lazy val exHi = project
+      .configure(
+        Settings.exampleProject(
+          "hi",
           useReact = true)
       )
       .dependsOn(scalaJs)
