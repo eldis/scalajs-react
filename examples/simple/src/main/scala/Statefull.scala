@@ -19,7 +19,7 @@ object Statefull {
   }
 
   @ScalaJSDefined
-  class SimpleObject(props: SimpleObjectProps) extends Component[SimpleObjectProps] {
+  class SimpleObject extends Component[SimpleObjectProps] {
 
     type State = Unit
 
