@@ -67,6 +67,7 @@ package object interop {
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, props, children: _*)
+
   }
 
   @js.native

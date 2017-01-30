@@ -19,7 +19,8 @@ object Main extends js.JSApp {
       React.createElement(
         js.constructorTag[Statefull.SimpleObject],
         Statefull.SimpleObjectProps("Hello from statefull component")
-      )
+      ),
+      Statefull.SimpleObject(Statefull.SimpleObjectProps("Hello from statefull component #2"))
     )
   }
 

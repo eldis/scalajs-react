@@ -23,13 +23,19 @@ object Statefull {
 
     type State = Unit
 
-    val render = (() => {
+    def render =
       React.createElement(
         "p",
         js.undefined,
         props.message
       )
-    }): js.Function0[ReactNode]
+
+  }
+
+  object SimpleObject {
+    def apply(p: SimpleObjectProps, children: ReactNode*): ReactDOMElement = {
+      React.createElement(js.constructorTag[SimpleObject], p, children: _*)
+    }
 
   }
 
