@@ -16,7 +16,7 @@ object Main extends js.JSApp {
         React.createElement("p", js.undefined, "Hi, I'm child")
       ),
       React.createElement("p", js.undefined, "And now create stateful component"),
-      Stateful.SimpleObject(Stateful.SimpleObjectProps("Hello from stateful component"))
+      Stateful.SimpleComponent(Stateful.SimpleComponentProps("Hello from stateful component"))
     )
   }
 

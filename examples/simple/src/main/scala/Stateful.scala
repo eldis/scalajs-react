@@ -4,22 +4,22 @@ import scalajs.js
 import js.annotation._
 import eldis.react.interop._
 
-object Statefull {
+object Stateful {
 
   @js.native
-  trait SimpleObjectProps extends js.Object {
+  trait SimpleComponentProps extends js.Object {
     val message: String = js.native
   }
 
-  object SimpleObjectProps {
-    def apply(message: String): SimpleObjectProps =
+  object SimpleComponentProps {
+    def apply(message: String): SimpleComponentProps =
       js.Dynamic.literal(
         message = message
-      ).asInstanceOf[SimpleObjectProps]
+      ).asInstanceOf[SimpleComponentProps]
   }
 
   @ScalaJSDefined
-  object SimpleObject extends Component[SimpleObjectProps] {
+  object SimpleComponent extends Component[SimpleComponentProps] {
 
     type State = Unit
 
@@ -29,7 +29,6 @@ object Statefull {
         js.undefined,
         props.message
       )
-
   }
 
 }
