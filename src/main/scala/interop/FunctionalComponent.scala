@@ -1,7 +1,6 @@
 package eldis.react.interop
 
 import scalajs.js
-import js.annotation._
 
 @js.native
 trait FunctionalComponent[-P <: js.Any] extends js.Any

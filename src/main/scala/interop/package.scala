@@ -1,7 +1,9 @@
 package eldis.react
 
+import scala.reflect.ClassTag
 import scalajs.js
 import js.annotation._
+import js.|
 import org.scalajs.dom
 
 package object interop {
@@ -28,36 +30,44 @@ package object interop {
   type Ref[C <: ReactNode] = js.Any
 
   @js.native
-  trait React extends js.Object {
+  trait JSReact extends js.Object {
+
+    def createElement[P <: js.Any](
+      el: String | js.Any,
+      props: js.UndefOr[P],
+      children: ReactNode*
+    ): ReactDOMElement = js.native
+  }
+
+  @JSImport("react", JSImport.Namespace)
+  @js.native
+  object JSReact extends JSReact
+
+  object React {
 
     def createElement(
       tag: String,
       props: js.UndefOr[js.Object],
       children: ReactNode*
-    ): ReactDOMElement = js.native
+    ): ReactDOMElement = JSReact.createElement(tag, props, children: _*)
 
     def createElement[P <: js.Any](
       f: FunctionalComponent[P],
       props: P
-    ): ReactDOMElement = js.native
+    ): ReactDOMElement = JSReact.createElement(f, props)
 
     def createElement[P <: js.Any](
       f: FunctionalComponent.WithChildren[P],
       props: P,
       children: ReactNode*
-    ): ReactDOMElement = js.native
+    ): ReactDOMElement = JSReact.createElement(f, props, children: _*)
 
-    def createElement[P <: js.Any](
-      c: js.Dynamic,
+    def createElement[P <: js.Any, C <: Component[P]](
+      tag: js.ConstructorTag[C],
       props: P,
       children: ReactNode*
-    ): ReactDOMElement = js.native
-
+    ): ReactDOMElement = JSReact.createElement(tag.constructor, props, children: _*)
   }
-
-  @JSImport("react", JSImport.Namespace)
-  @js.native
-  object React extends React
 
   @js.native
   trait ReactDOM extends js.Object {
