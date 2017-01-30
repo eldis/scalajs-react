@@ -19,6 +19,11 @@ abstract class JSComponent[Props <: js.Any] extends js.Object {
 @ScalaJSDefined
 abstract class Component[Props <: js.Any] extends JSComponent[Props] {
 
+  def this(name: String) {
+    this()
+    this.asInstanceOf[js.Dynamic].constructor.displayName = name
+  }
+
   def render(): ReactNode
 
   @JSName("createElement")
