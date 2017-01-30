@@ -21,5 +21,11 @@ abstract class Component[Props <: js.Any] extends JSComponent[Props] {
 
   def render(): ReactNode
 
+  @JSName("createElement")
+  def apply(p: Props, children: ReactNode*): ReactDOMElement = {
+    val c = this.asInstanceOf[js.Dynamic].constructor
+    JSReact.createElement(c, p, children: _*)
+  }
+
 }
 

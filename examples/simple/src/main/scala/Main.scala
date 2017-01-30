@@ -15,12 +15,8 @@ object Main extends js.JSApp {
         Stateless.SimpleComponentProp("Hello from simple component with children"),
         React.createElement("p", js.undefined, "Hi, I'm child")
       ),
-      React.createElement("p", js.undefined, "And now create statefull component"),
-      React.createElement(
-        js.constructorTag[Statefull.SimpleObject],
-        Statefull.SimpleObjectProps("Hello from statefull component")
-      ),
-      Statefull.SimpleObject(Statefull.SimpleObjectProps("Hello from statefull component #2"))
+      React.createElement("p", js.undefined, "And now create stateful component"),
+      Stateful.SimpleObject(Stateful.SimpleObjectProps("Hello from stateful component"))
     )
   }
 

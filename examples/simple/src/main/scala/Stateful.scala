@@ -19,7 +19,7 @@ object Statefull {
   }
 
   @ScalaJSDefined
-  class SimpleObject extends Component[SimpleObjectProps] {
+  object SimpleObject extends Component[SimpleObjectProps] {
 
     type State = Unit
 
@@ -29,13 +29,6 @@ object Statefull {
         js.undefined,
         props.message
       )
-
-  }
-
-  object SimpleObject {
-    def apply(p: SimpleObjectProps, children: ReactNode*): ReactDOMElement = {
-      React.createElement(js.constructorTag[SimpleObject], p, children: _*)
-    }
 
   }
 
