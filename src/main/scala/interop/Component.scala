@@ -14,6 +14,8 @@ abstract class JSComponent[Props <: js.Any] extends js.Object {
 
   def setState(s: State): Unit = js.native
 
+  def render(): ReactNode
+
 }
 
 @ScalaJSDefined
@@ -23,8 +25,6 @@ abstract class Component[Props <: js.Any] extends JSComponent[Props] {
     this()
     this.asInstanceOf[js.Dynamic].constructor.displayName = name
   }
-
-  def render(): ReactNode
 
   @JSName("createElement")
   def apply(p: Props, children: ReactNode*): ReactDOMElement = {
