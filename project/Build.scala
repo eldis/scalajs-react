@@ -19,6 +19,11 @@ object ScalaJSReact {
     val htmlLoader = "~0.4.3"
 
     val react = "~15.4.2"
+
+    val todomvcAppCss = "^2.0.1"
+    val todomvcCommon = "^1.0.2"
+
+    val copyWebpackPlugin = "~4.0.1"
   }
 
   object Dependencies {
@@ -29,6 +34,15 @@ object ScalaJSReact {
     lazy val jsReact = Seq(
       "react" -> JsVersions.react,
       "react-dom" -> JsVersions.react
+    )
+
+    lazy val jsTodoExample = jsReact ++ Seq(
+      "todomvc-app-css" -> JsVersions.todomvcAppCss,
+      "todomvc-common" -> JsVersions.todomvcCommon
+    )
+
+    lazy val jsTodoExampleDev = Seq(
+      "copy-webpack-plugin" -> JsVersions.copyWebpackPlugin
     )
   }
 
@@ -113,6 +127,19 @@ object ScalaJSReact {
         Settings.exampleProject(
           "simple",
           useReact = true)
+      )
+      .dependsOn(scalaJsReact)
+
+    lazy val exTodomvc = project
+      .configure(
+        Settings.exampleProject(
+          "todo",
+          useReact = true
+        )
+      )
+      .settings(
+        npmDependencies in Compile ++= Dependencies.jsTodoExample,
+        npmDevDependencies in Compile ++= Dependencies.jsTodoExampleDev
       )
       .dependsOn(scalaJsReact)
 

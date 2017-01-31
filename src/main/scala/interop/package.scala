@@ -4,12 +4,14 @@ import scala.reflect.ClassTag
 import scalajs.js
 import js.annotation._
 import js.|
-import org.scalajs.dom
+import org.scalajs.{ dom => jsdom }
 
 package object interop {
 
   @js.native
   trait ReactNode extends js.Object
+
+  val EmptyNode = js.undefined.asInstanceOf[ReactNode]
 
   @js.native
   trait ReactElement extends js.Object with ReactNode {
@@ -26,13 +28,10 @@ package object interop {
 
   type PropsChildren = js.Array[ReactNode]
 
-  //TODO: Fix the type
-  type Ref[C <: ReactNode] = js.Any
-
   @js.native
   trait JSReact extends js.Object {
 
-    def createElement[P <: js.Any](
+    def createElement[P](
       el: String | js.Any,
       props: js.UndefOr[P],
       children: ReactNode*
@@ -51,22 +50,32 @@ package object interop {
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag, props, children: _*)
 
-    def createElement[P <: js.Any](
+    def createElement(
+      tag: String,
+      children: ReactNode*
+    ): ReactDOMElement = JSReact.createElement(tag, js.undefined, children: _*)
+
+    def createElement[P](
       f: FunctionalComponent[P],
       props: P
     ): ReactDOMElement = JSReact.createElement(f, props)
 
-    def createElement[P <: js.Any](
+    def createElement[P](
       f: FunctionalComponent.WithChildren[P],
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(f, props, children: _*)
 
-    def createElement[P <: js.Any, C <: Component[P]](
+    def createElement[P, C <: Component[P]](
       tag: js.ConstructorTag[C],
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, props, children: _*)
+
+    def createElement[C <: Component[Unit]](
+      tag: js.ConstructorTag[C],
+      children: ReactNode*
+    ): ReactDOMElement = JSReact.createElement(tag.constructor, js.undefined, children: _*)
 
   }
 
@@ -75,7 +84,7 @@ package object interop {
 
     def render[N <: ReactNode](
       node: N,
-      container: dom.Node,
+      container: jsdom.Node,
       callback: js.UndefOr[js.ThisFunction] = js.undefined
     ): Ref[N] = js.native
 
@@ -88,5 +97,20 @@ package object interop {
   // Implicits
   @inline implicit def reactNodeFromString(s: String) = s.asInstanceOf[ReactNode]
   @inline implicit def reactNodeFromNodeArray(a: js.Array[ReactNode]) = a.asInstanceOf[ReactNode]
+
+  // Wrapper object for scalajs properties
+  @js.native
+  trait Wrapped[T] extends js.Any {
+    val get: T = js.native
+    val key: js.UndefOr[String] = js.native
+  }
+
+  object Wrapped {
+    def apply[T](value: T, key: js.UndefOr[String] = js.undefined): Wrapped[T] =
+      js.Dynamic.literal(
+        get = value.asInstanceOf[js.Any],
+        key = key
+      ).asInstanceOf[Wrapped[T]]
+  }
 
 }
