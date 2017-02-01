@@ -4,3 +4,4 @@ scalaVersion in ThisBuild := Versions.scala
 
 lazy val scalaJsReact = Projects.scalaJsReact
 lazy val exSimple = Projects.exSimple
+lazy val exHi = Projects.exHi
