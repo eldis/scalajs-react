@@ -2,7 +2,7 @@ package eldis.react.examples.simple
 
 import scalajs.js
 import js.annotation._
-import eldis.react.interop._
+import eldis.react._
 
 object Stateful {
 

@@ -1,6 +1,6 @@
 package eldis.react.examples.simple
 
-import eldis.react.interop._
+import eldis.react._
 import scalajs.js
 import js.annotation.JSName
 

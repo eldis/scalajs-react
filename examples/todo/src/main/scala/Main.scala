@@ -4,7 +4,7 @@ import scalajs.js
 import js.JSApp
 import org.scalajs.dom
 
-import eldis.react.interop._
+import eldis.react._
 
 object Main extends JSApp {
 

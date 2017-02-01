@@ -1,4 +1,4 @@
-package eldis.react.interop
+package eldis.react
 
 import scalajs.js
 import js.annotation._

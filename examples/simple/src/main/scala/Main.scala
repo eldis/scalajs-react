@@ -1,7 +1,7 @@
 package eldis.react.examples.simple
 
 import scalajs.js
-import eldis.react.interop._
+import eldis.react._
 import org.scalajs.dom
 
 object Main extends js.JSApp {
