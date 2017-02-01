@@ -19,6 +19,10 @@ abstract class JSComponent[P <: js.Any] extends js.Object {
 
   def initialState: State = js.native
   def render(): ReactNode
+  protected def componentWillUpdate(nextProps: Props, nextState: Wrapped[State]): Unit = js.native
+  protected def componentDidUpdate(prevProps: Props, prevState: Wrapped[State]): Unit = js.native
+  protected def componentDidMount(): Unit = js.native
+  protected def componentWillUnmount(): Unit = js.native
 }
 
 @ScalaJSDefined
@@ -54,24 +58,28 @@ abstract class Component[P <: js.Any] extends JSComponent[P] {
     JSReact.createElement(c, (), children: _*)
   }
 
-  private def componentWillUpdate(nextProps: Props, nextState: Wrapped[State]): Unit = {
-    willUpdate(nextProps, nextState.get)
+  @JSName("componentWillUpdate")
+  override protected def componentWillUpdate(nextProps: Props, nextState: Wrapped[State]): Unit = {
+    willUpdate(nextProps, Option(nextState).map(_.get))
   }
 
-  private def componentDidUpdate(prevProps: Props, prevState: Wrapped[State]): Unit = {
-    didUpdate(prevProps, prevState.get)
+  @JSName("componentDidUpdate")
+  override protected def componentDidUpdate(prevProps: Props, prevState: Wrapped[State]): Unit = {
+    didUpdate(prevProps, Option(prevState).map(_.get))
   }
 
-  private def componentDidMount(): Unit = {
+  @JSName("componentDidMount")
+  override protected def componentDidMount(): Unit = {
     didMount()
   }
 
-  private def componentWillUnmount(): Unit = {
+  @JSName("componentWillUnmount")
+  override protected def componentWillUnmount(): Unit = {
     willUnmount()
   }
 
-  def willUpdate(nextProps: Props, nextState: State): Unit = {}
-  def didUpdate(prevProps: Props, prevState: State): Unit = {}
+  def willUpdate(nextProps: Props, nextState: Option[State]): Unit = {}
+  def didUpdate(prevProps: Props, prevState: Option[State]): Unit = {}
   def didMount(): Unit = {}
   def willUnmount(): Unit = {}
 }

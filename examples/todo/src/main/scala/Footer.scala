@@ -15,6 +15,8 @@ case class FooterProps(
 @ScalaJSDefined
 class Footer extends Component[Wrapped[FooterProps]]("Footer") {
 
+  type State = Nothing
+
   import js.Dynamic.{ literal => JSObj }
 
   def filterLink(f: TodoFilter) = {
