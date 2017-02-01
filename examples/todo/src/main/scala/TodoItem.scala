@@ -99,7 +99,7 @@ class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
     )
   }
 
-  override def componentDidUpdate(prevProps: Props, prevState: Wrapped[State]) {
+  override def didUpdate(prevProps: Props, prevState: State) {
     if (props.get.isEditing && !prevProps.get.isEditing)
       inputRef.get.map(_.focus())
   }

@@ -19,12 +19,6 @@ abstract class JSComponent[P <: js.Any] extends js.Object {
 
   def initialState: State = js.native
   def render(): ReactNode
-  def componentDidMount(): Unit = js.native
-  def componentWillUnmount(): Unit = js.native
-  //TODO: Remove wrapper object
-  def componentWillUpdate(nextProps: Props, nextState: Wrapped[State]): Unit = js.native
-  //TODO: Remove wrapper object
-  def componentDidUpdate(prevProps: Props, prevState: Wrapped[State]): Unit = js.native
 }
 
 @ScalaJSDefined
@@ -60,5 +54,25 @@ abstract class Component[P <: js.Any] extends JSComponent[P] {
     JSReact.createElement(c, (), children: _*)
   }
 
+  private def componentWillUpdate(nextProps: Props, nextState: Wrapped[State]): Unit = {
+    willUpdate(nextProps, nextState.get)
+  }
+
+  private def componentDidUpdate(prevProps: Props, prevState: Wrapped[State]): Unit = {
+    didUpdate(prevProps, prevState.get)
+  }
+
+  private def componentDidMount(): Unit = {
+    didMount()
+  }
+
+  private def componentWillUnmount(): Unit = {
+    willUnmount()
+  }
+
+  def willUpdate(nextProps: Props, nextState: State): Unit = {}
+  def didUpdate(prevProps: Props, prevState: State): Unit = {}
+  def didMount(): Unit = {}
+  def willUnmount(): Unit = {}
 }
 

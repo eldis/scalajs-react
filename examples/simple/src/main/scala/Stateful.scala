@@ -21,7 +21,7 @@ object Stateful {
   @ScalaJSDefined
   object SimpleComponent extends Component[SimpleComponentProps]("Stateful.simpleComponent") {
 
-    type State = Unit
+    type State = Nothing
 
     def render =
       React.createElement(
