@@ -6,20 +6,15 @@ import js.annotation.JSName
 
 object Stateless {
 
-  @js.native
-  trait SimpleComponentProp extends js.Object {
-    val message: String
-  }
-  object SimpleComponentProp {
-    def apply(message: String) =
-      js.Dynamic.literal(message = message).asInstanceOf[SimpleComponentProp]
+  case class SimpleComponentProp(
+    message: String
+  )
+
+  val simpleComponent = FunctionalComponent[Wrapped[SimpleComponentProp]]("simpleComponent") { p =>
+    React.createElement("p", js.undefined, p.get.message)
   }
 
-  val simpleComponent = FunctionalComponent[SimpleComponentProp]("simpleComponent") { p =>
-    React.createElement("p", js.undefined, p.message)
-  }
-
-  val simpleComponentWithChildren = FunctionalComponent.withChildren("simpleComponentWithChildren") { (p: SimpleComponentProp, ch: PropsChildren) =>
+  val simpleComponentWithChildren = FunctionalComponent.withChildren("simpleComponentWithChildren") { (p: Wrapped[SimpleComponentProp], ch: PropsChildren) =>
     React.createElement(
       "div",
       js.undefined,

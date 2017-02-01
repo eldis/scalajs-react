@@ -3,11 +3,11 @@ package eldis.react.examples.todomvc
 import scalajs.js
 import js.annotation._
 import eldis.react._
-import dom._
+import vdom._
 import org.scalajs.dom.ext.KeyCode
 
 @ScalaJSDefined
-class TodoList extends Component[Unit]("TodoList") {
+class TodoList extends Component[Nothing]("TodoList") {
 
   import js.Dynamic.{ literal => JSObj }
 

@@ -1,4 +1,4 @@
-package eldis.react.dom
+package eldis.react.vdom
 
 import scalajs.js
 import org.scalajs.dom

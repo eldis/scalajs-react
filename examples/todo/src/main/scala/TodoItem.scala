@@ -3,7 +3,7 @@ package eldis.react.examples.todomvc
 import scalajs.js
 import js.annotation._
 import eldis.react._
-import dom._
+import vdom._
 import org.scalajs.dom.html
 import org.scalajs.dom.ext.KeyCode
 

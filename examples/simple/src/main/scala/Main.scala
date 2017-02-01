@@ -10,9 +10,9 @@ object Main extends js.JSApp {
     React.createElement(
       "div", js.undefined,
       React.createElement("p", js.undefined, "Create stateless element:"),
-      Stateless.simpleComponent(Stateless.SimpleComponentProp("Hello from simple component")),
+      Stateless.simpleComponent(Wrapped(Stateless.SimpleComponentProp("Hello from simple component"))),
       Stateless.simpleComponentWithChildren(
-        Stateless.SimpleComponentProp("Hello from simple component with children"),
+        Wrapped(Stateless.SimpleComponentProp("Hello from simple component with children")),
         React.createElement("p", js.undefined, "Hi, I'm child")
       ),
       React.createElement("p", js.undefined, "And now create stateful component"),

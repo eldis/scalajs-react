@@ -55,24 +55,24 @@ package object react {
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag, js.undefined, children: _*)
 
-    def createElement[P](
+    def createElement[P <: js.Any](
       f: FunctionalComponent[P],
       props: P
     ): ReactDOMElement = JSReact.createElement(f, props)
 
-    def createElement[P](
+    def createElement[P <: js.Any](
       f: FunctionalComponent.WithChildren[P],
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(f, props, children: _*)
 
-    def createElement[P, C <: Component[P]](
+    def createElement[P <: js.Any, C <: Component[P]](
       tag: js.ConstructorTag[C],
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, props, children: _*)
 
-    def createElement[C <: Component[Unit]](
+    def createElement[C <: Component[Nothing]](
       tag: js.ConstructorTag[C],
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, js.undefined, children: _*)

@@ -5,7 +5,7 @@ import js.annotation._
 
 @JSImport("react", "Component")
 @js.native
-abstract class JSComponent[P] extends js.Object {
+abstract class JSComponent[P <: js.Any] extends js.Object {
 
   type Props = P
   type State
@@ -28,7 +28,7 @@ abstract class JSComponent[P] extends js.Object {
 }
 
 @ScalaJSDefined
-abstract class Component[Props] extends JSComponent[Props] {
+abstract class Component[P <: js.Any] extends JSComponent[P] {
 
   def this(name: String) {
     this()
