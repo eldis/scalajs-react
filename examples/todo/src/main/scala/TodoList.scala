@@ -8,7 +8,7 @@ import prefix_<^._
 import org.scalajs.dom.ext.KeyCode
 
 @ScalaJSDefined
-class TodoList extends ScalaComponent[Nothing]("TodoList") {
+class TodoList extends Component[Nothing]("TodoList") {
 
   case class State(
     todos: List[Todo],

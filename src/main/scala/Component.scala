@@ -3,7 +3,7 @@ package eldis.react
 import scalajs.js
 import js.annotation._
 
-trait ComponentWrappers {
+trait PropsWrappers {
 
   type Identity[P] = P
 

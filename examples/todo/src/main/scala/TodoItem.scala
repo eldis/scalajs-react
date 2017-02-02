@@ -19,7 +19,7 @@ case class TodoItemProps(
 )
 
 @ScalaJSDefined
-class TodoItem extends ScalaComponent[TodoItemProps]("TodoItem") {
+class TodoItem extends Component[TodoItemProps]("TodoItem") {
 
   case class State(
     editText: UnfinishedTitle

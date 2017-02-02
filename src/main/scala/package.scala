@@ -6,7 +6,7 @@ import js.annotation._
 import js.|
 import org.scalajs.{ dom => jsdom }
 
-package object react extends ComponentWrappers {
+package object react extends PropsWrappers {
 
   @js.native
   trait ReactNode extends js.Object

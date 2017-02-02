@@ -15,7 +15,7 @@ case class FooterProps(
 )
 
 @ScalaJSDefined
-class Footer extends ScalaComponent[FooterProps]("Footer") {
+class Footer extends Component[FooterProps]("Footer") {
 
   override type State = Nothing
 
