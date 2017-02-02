@@ -94,6 +94,16 @@ package object react {
   @js.native
   object ReactDOM extends ReactDOM
 
+  @js.native
+  trait ReactDOMServer extends js.Object {
+    def renderToString[N <: ReactNode](node: N): String = js.native
+    def renderToStaticMarkup[N <: ReactNode](node: N): String = js.native
+  }
+
+  @JSImport("react-dom/server", JSImport.Namespace)
+  @js.native
+  object ReactDOMServer extends ReactDOMServer
+
   // Implicits
   @inline implicit def reactNodeFromString(s: String) = s.asInstanceOf[ReactNode]
   @inline implicit def reactNodeFromNodeArray(a: js.Array[ReactNode]) = a.asInstanceOf[ReactNode]

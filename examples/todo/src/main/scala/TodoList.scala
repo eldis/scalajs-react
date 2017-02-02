@@ -4,12 +4,11 @@ import scalajs.js
 import js.annotation._
 import eldis.react._
 import vdom._
+import prefix_<^._
 import org.scalajs.dom.ext.KeyCode
 
 @ScalaJSDefined
 class TodoList extends Component[Nothing]("TodoList") {
-
-  import js.Dynamic.{ literal => JSObj }
 
   case class State(
     todos: List[Todo],
@@ -50,23 +49,16 @@ class TodoList extends Component[Nothing]("TodoList") {
     val filteredTodos = todos filter state.currentFilter.accepts
     val activeCount = todos count TodoFilter.Active.accepts
     val completedCount = todos.length - activeCount
-    React.createElement(
-      "div",
-      React.createElement("h1", "todos"),
-      React.createElement(
-        "header",
-        JSObj(
-          className = "header"
-        ),
-        React.createElement(
-          "input",
-          JSObj(
-            className = "new-todo",
-            placeholder = "What needs to be done?",
-            onKeyDown = handleNewTodoKeyDown _,
-            autoFocus = true
-          )
-        )
+
+    <.div()(
+      <.h1()("todos"),
+      <.header(^.className := "header")(
+        <.input(
+          ^.className := "new-todo",
+          ^.placeholder := "What needs to be done?",
+          ^.onKeyDown ==> handleNewTodoKeyDown _,
+          ^.autoFocus := true
+        )()
       ),
       if (todos.nonEmpty) todoList(filteredTodos, activeCount) else EmptyNode,
       if (todos.nonEmpty) footer(activeCount, completedCount) else EmptyNode
@@ -111,21 +103,13 @@ class TodoList extends Component[Nothing]("TodoList") {
   }
 
   def todoList(filteredTodos: Seq[Todo], activeCount: Int) = {
-    React.createElement(
-      "section",
-      JSObj(className = "main"),
-      React.createElement(
-        "input",
-        JSObj(
-          className = "toggle-all",
-          `type` = "checkbox",
-          checked = activeCount == 0,
-          onChange = toggleAll _
-        )
-      ),
-      React.createElement(
-        "ul",
-        JSObj(className = "todo-list"),
+    <.section(^.className := "main")(
+      <.input.checkbox(
+        ^.className := "toggle-all",
+        ^.checked := activeCount == 0,
+        ^.onChange ==> toggleAll _
+      )(),
+      <.ul(^.className := "todo-list")(
         filteredTodos.map({ todo =>
           TodoItem(
             TodoItemProps(

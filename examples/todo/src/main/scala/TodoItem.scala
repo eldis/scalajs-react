@@ -4,6 +4,7 @@ import scalajs.js
 import js.annotation._
 import eldis.react._
 import vdom._
+import vdom.prefix_<^._
 import org.scalajs.dom.html
 import org.scalajs.dom.ext.KeyCode
 
@@ -19,8 +20,6 @@ case class TodoItemProps(
 
 @ScalaJSDefined
 class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
-
-  import js.Dynamic.{ literal => JSObj }
 
   case class State(
     editText: UnfinishedTitle
@@ -55,47 +54,28 @@ class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
 
   def render = {
     val p = props.get
-    React.createElement(
-      "li",
-      JSObj(
-        className = s"""${if (p.todo.isCompleted) "completed" else ""} ${if (p.isEditing) "editing" else ""}"""
+
+    <.li(^.className := classNames(p.todo.isCompleted -> "completed", p.isEditing -> "editing"))(
+      <.div(^.className := "view")(
+        <.input.checkbox(
+          ^.className := "toggle",
+          ^.checked := p.todo.isCompleted,
+          ^.onChange --> p.onToggle
+        )(),
+        <.label(^.onDoubleClick --> p.onStartEditing)(p.todo.title.value),
+        <.button(
+          ^.className := "destroy",
+          ^.onClick --> p.onDelete
+        )()
       ),
-      React.createElement(
-        "div",
-        JSObj(className = "view"),
-        React.createElement(
-          "input",
-          JSObj(
-            className = "toggle",
-            `type` = "checkbox",
-            checked = p.todo.isCompleted,
-            onChange = p.onToggle
-          )
-        ),
-        React.createElement(
-          "label",
-          JSObj(onDoubleClick = p.onStartEditing),
-          p.todo.title.value
-        ),
-        React.createElement(
-          "button",
-          JSObj(
-            className = "destroy",
-            onClick = p.onDelete
-          )
-        )
-      ),
-      React.createElement(
-        "input",
-        JSObj(
-          ref = inputRef(),
-          className = "edit",
-          onBlur = editFieldSubmit _,
-          onChange = editFieldChanged _,
-          onKeyDown = editFieldKeyDown _,
-          value = state.editText.value
-        )
-      )
+      <.input(
+        ^.ref := inputRef(),
+        ^.className := "edit",
+        ^.onBlur --> editFieldSubmit _,
+        ^.onChange ==> editFieldChanged _,
+        ^.onKeyDown ==> editFieldKeyDown _,
+        ^.value := state.editText.value
+      )()
     )
   }
 

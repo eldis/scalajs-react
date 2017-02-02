@@ -3,6 +3,7 @@ package eldis.react.examples.simple
 import scalajs.js
 import js.annotation._
 import eldis.react._
+import vdom.prefix_<^._
 
 object Stateful {
 
@@ -23,12 +24,7 @@ object Stateful {
 
     type State = Nothing
 
-    def render =
-      React.createElement(
-        "p",
-        js.undefined,
-        props.message
-      )
+    def render = <.p()(props.message)
   }
 
 }

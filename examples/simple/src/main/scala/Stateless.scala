@@ -1,6 +1,7 @@
 package eldis.react.examples.simple
 
 import eldis.react._
+import vdom.prefix_<^._
 import scalajs.js
 import js.annotation.JSName
 
@@ -11,13 +12,11 @@ object Stateless {
   )
 
   val simpleComponent = FunctionalComponent[Wrapped[SimpleComponentProp]]("simpleComponent") { p =>
-    React.createElement("p", js.undefined, p.get.message)
+    <.p()(p.get.message)
   }
 
   val simpleComponentWithChildren = FunctionalComponent.withChildren("simpleComponentWithChildren") { (p: Wrapped[SimpleComponentProp], ch: PropsChildren) =>
-    React.createElement(
-      "div",
-      js.undefined,
+    <.div()(
       simpleComponent(p),
       ch
     )
