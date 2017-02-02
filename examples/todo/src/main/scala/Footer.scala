@@ -15,12 +15,12 @@ case class FooterProps(
 )
 
 @ScalaJSDefined
-class Footer extends Component[Wrapped[FooterProps]]("Footer") {
+class Footer extends ScalaComponent[FooterProps]("Footer") {
 
-  type State = Nothing
+  override type State = Nothing
 
   def filterLink(f: TodoFilter) = {
-    val p = this.props.get
+    val p = this.props
     <.li()(
       <.a(
         p.currentFilter == f ?= (^.className := "selected"),
@@ -31,18 +31,18 @@ class Footer extends Component[Wrapped[FooterProps]]("Footer") {
   }
 
   def clearButton() = {
-    val p = this.props.get
+    val p = this.props
     <.button(
       ^.className := "clear-completed",
       ^.onClick --> p.onClearCompleted,
       ^.style := Style(
-        p.completedCount > 0 ?= "visibility" -> "hidden"
+        p.completedCount == 0 ?= "visibility" -> "hidden"
       )
     )("Clear completed")
   }
 
   def render() = {
-    val p = this.props.get
+    val p = this.props
 
     <.footer(^.className := "footer")(
       <.span(^.className := "todo-count")(
@@ -59,7 +59,4 @@ class Footer extends Component[Wrapped[FooterProps]]("Footer") {
 }
 
 @ScalaJSDefined
-object Footer extends Footer {
-  @JSName("createWrapped")
-  def apply(p: FooterProps): ReactDOMElement = apply(Wrapped(p))
-}
+object Footer extends Footer

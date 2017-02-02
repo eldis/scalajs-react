@@ -16,7 +16,8 @@ object Main extends js.JSApp {
         <.p()("Hi, I'm child")
       ),
       <.p()("And now create stateful component"),
-      Stateful.SimpleComponent(Stateful.SimpleComponentProps("Hello from stateful component"))
+      Stateful.NativeComponent(Stateful.NativeProps("Hello from native stateful component")),
+      Stateful.ScalaComponent(Stateful.ScalaProps("Hello from scala stateful component"))
     )
   }
 

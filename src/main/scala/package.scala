@@ -6,7 +6,7 @@ import js.annotation._
 import js.|
 import org.scalajs.{ dom => jsdom }
 
-package object react {
+package object react extends ComponentWrappers {
 
   @js.native
   trait ReactNode extends js.Object
@@ -66,13 +66,13 @@ package object react {
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(f, props, children: _*)
 
-    def createElement[P <: js.Any, C <: Component[P]](
+    def createElement[P <: js.Any, F[_], C <: ComponentBase[F, P]](
       tag: js.ConstructorTag[C],
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, props, children: _*)
 
-    def createElement[C <: Component[Nothing]](
+    def createElement[F[_], C <: ComponentBase[F, Nothing]](
       tag: js.ConstructorTag[C],
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, js.undefined, children: _*)
@@ -122,5 +122,8 @@ package object react {
         key = key
       ).asInstanceOf[Wrapped[T]]
   }
+
+  type NativeComponent[P <: js.Any] = ComponentBase[Identity, P]
+  type Component[P] = ComponentBase[Wrapped, P]
 
 }

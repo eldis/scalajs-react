@@ -19,7 +19,7 @@ case class TodoItemProps(
 )
 
 @ScalaJSDefined
-class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
+class TodoItem extends ScalaComponent[TodoItemProps]("TodoItem") {
 
   case class State(
     editText: UnfinishedTitle
@@ -27,12 +27,11 @@ class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
 
   override def initialState =
     State(
-      editText = props.get.todo.title.editable
+      editText = props.todo.title.editable
     )
 
   def editFieldSubmit() = {
-    val p = props.get
-    state.editText.validated.fold(p.onDelete())(p.onUpdateTitle)
+    state.editText.validated.fold(props.onDelete())(props.onUpdateTitle)
   }
 
   def editFieldChanged(e: ReactEventI) = {
@@ -42,8 +41,8 @@ class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
   def editFieldKeyDown(e: ReactKeyboardEventI) = {
     e.keyCode match {
       case KeyCode.Escape => {
-        setState(state.copy(editText = props.get.todo.title.editable))
-        props.get.onCancelEditing()
+        setState(state.copy(editText = props.todo.title.editable))
+        props.onCancelEditing()
       }
       case KeyCode.Enter => editFieldSubmit()
       case _ => ()
@@ -53,7 +52,7 @@ class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
   val inputRef = Ref[html.Input]()
 
   def render = {
-    val p = props.get
+    val p = props
 
     <.li(^.className := classNames(p.todo.isCompleted -> "completed", p.isEditing -> "editing"))(
       <.div(^.className := "view")(
@@ -80,14 +79,10 @@ class TodoItem extends Component[Wrapped[TodoItemProps]]("TodoItem") {
   }
 
   override def didUpdate(prevProps: Props, prevState: Option[State]) {
-    if (props.get.isEditing && !prevProps.get.isEditing)
+    if (props.isEditing && !prevProps.isEditing)
       inputRef.get.map(_.focus())
   }
 }
 
 @ScalaJSDefined
-object TodoItem extends TodoItem {
-  @JSName("createWrapped")
-  def apply(p: TodoItemProps): ReactDOMElement = apply(Wrapped(p, p.todo.id.toString))
-}
-
+object TodoItem extends TodoItem
