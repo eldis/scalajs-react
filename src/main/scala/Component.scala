@@ -107,12 +107,12 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
 
   @JSName("componentWillUpdate")
   override protected def componentWillUpdate(nextProps: js.Any, nextState: Wrapped[State]): Unit = {
-    willUpdate(implicitly[UnwrapNative[F]].unwrap(nextProps), Option(nextState).map(_.get))
+    willUpdate(implicitly[UnwrapNative[F]].unwrap(nextProps), nextState.get)
   }
 
   @JSName("componentDidUpdate")
   override protected def componentDidUpdate(prevProps: js.Any, prevState: Wrapped[State]): Unit = {
-    didUpdate(implicitly[UnwrapNative[F]].unwrap(prevProps), Option(prevState).map(_.get))
+    didUpdate(implicitly[UnwrapNative[F]].unwrap(prevProps), prevState.get)
   }
 
   @JSName("componentDidMount")
@@ -125,8 +125,8 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
     willUnmount()
   }
 
-  def willUpdate(nextProps: Props, nextState: Option[State]): Unit = {}
-  def didUpdate(prevProps: Props, prevState: Option[State]): Unit = {}
+  def willUpdate(nextProps: Props, nextState: State): Unit = {}
+  def didUpdate(prevProps: Props, prevState: State): Unit = {}
   def didMount(): Unit = {}
   def willUnmount(): Unit = {}
 }
