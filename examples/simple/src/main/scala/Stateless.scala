@@ -7,17 +7,33 @@ import js.annotation.JSName
 
 object Stateless {
 
-  case class SimpleComponentProp(
+  @js.native
+  trait NativeProps extends js.Object {
+    val message: String = js.native
+  }
+
+  object NativeProps {
+    def apply(message: String): NativeProps =
+      js.Dynamic.literal(
+        message = message
+      ).asInstanceOf[NativeProps]
+  }
+
+  val nativeComponent = NativeFunctionalComponent("Stateless.native") { p: NativeProps =>
+    <.p()(p.message)
+  }
+
+  case class ScalaProps(
     message: String
   )
 
-  val simpleComponent = FunctionalComponent[Wrapped[SimpleComponentProp]]("simpleComponent") { p =>
-    <.p()(p.get.message)
+  val scalaComponent = FunctionalComponent("Stateless.scala") { p: ScalaProps =>
+    <.p()(p.message)
   }
 
-  val simpleComponentWithChildren = FunctionalComponent.withChildren("simpleComponentWithChildren") { (p: Wrapped[SimpleComponentProp], ch: PropsChildren) =>
+  val scalaComponentWithChildren = FunctionalComponent.withChildren("Stateless.scalaWithChildren") { (p: ScalaProps, ch: PropsChildren) =>
     <.div()(
-      simpleComponent(p),
+      scalaComponent(p),
       ch
     )
   }

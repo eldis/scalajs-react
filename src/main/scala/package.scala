@@ -6,7 +6,7 @@ import js.annotation._
 import js.|
 import org.scalajs.{ dom => jsdom }
 
-package object react extends PropsWrappers {
+package object react extends PropsImplicits {
 
   @js.native
   trait ReactNode extends js.Object
@@ -55,22 +55,33 @@ package object react extends PropsWrappers {
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag, js.undefined, children: _*)
 
-    def createElement[P <: js.Any](
+    def createElement[P](
       f: FunctionalComponent[P],
+      props: P
+    ): ReactDOMElement = JSReact.createElement(f, Wrapped(props))
+
+    def createElement[P](
+      f: FunctionalComponent.WithChildren[P],
+      props: P,
+      children: ReactNode*
+    ): ReactDOMElement = JSReact.createElement(f, Wrapped(props), children: _*)
+
+    def createElement[P <: js.Any](
+      f: NativeFunctionalComponent[P],
       props: P
     ): ReactDOMElement = JSReact.createElement(f, props)
 
     def createElement[P <: js.Any](
-      f: FunctionalComponent.WithChildren[P],
+      f: NativeFunctionalComponent.WithChildren[P],
       props: P,
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(f, props, children: _*)
 
-    def createElement[P <: js.Any, F[_], C <: ComponentBase[F, P]](
+    def createElement[P: WrapToNative, F[_]: UnwrapNative, C <: ComponentBase[F, P]](
       tag: js.ConstructorTag[C],
       props: P,
       children: ReactNode*
-    ): ReactDOMElement = JSReact.createElement(tag.constructor, props, children: _*)
+    ): ReactDOMElement = JSReact.createElement(tag.constructor, implicitly[WrapToNative[P]].wrap(props), children: _*)
 
     def createElement[F[_], C <: ComponentBase[F, Nothing]](
       tag: js.ConstructorTag[C],

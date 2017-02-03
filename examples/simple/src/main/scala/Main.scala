@@ -10,9 +10,10 @@ object Main extends js.JSApp {
   def render(): ReactNode = {
     <.div()(
       <.p()("Create stateless element:"),
-      Stateless.simpleComponent(Wrapped(Stateless.SimpleComponentProp("Hello from simple component"))),
-      Stateless.simpleComponentWithChildren(
-        Wrapped(Stateless.SimpleComponentProp("Hello from simple component with children")),
+      Stateless.nativeComponent(Stateless.NativeProps("Hello from native stateless component")),
+      Stateless.scalaComponent(Stateless.ScalaProps("Hello from scala stateless component")),
+      Stateless.scalaComponentWithChildren(
+        Stateless.ScalaProps("Hello from scala stateless component with children"),
         <.p()("Hi, I'm child")
       ),
       <.p()("And now create stateful component"),
