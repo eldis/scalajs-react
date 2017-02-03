@@ -26,7 +26,11 @@ object Stateful {
 
     def initialState = ()
 
-    def render = <.p()(props.message)
+    def render =
+      <.div()(
+        <.p()(props.message),
+        propsChildren
+      )
   }
 
   @ScalaJSDefined
@@ -43,7 +47,11 @@ object Stateful {
 
     def initialState = ()
 
-    def render = <.p()(props.message)
+    def render =
+      <.div()(
+        <.p()(props.message),
+        propsChildren
+      )
   }
 
   @ScalaJSDefined

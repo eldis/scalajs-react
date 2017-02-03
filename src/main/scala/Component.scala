@@ -38,6 +38,14 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
   @JSName("propsImpl")
   def props: Props = implicitly[UnwrapNative[F]].unwrap(propsNative)
 
+  def propsChildren: js.Array[ReactNode] = {
+    //TODO: cache it and invalidate when receive new props
+    val ch = Option(propsNative.asInstanceOf[js.Dynamic])
+      .flatMap(p => Option(p.children.asInstanceOf[js.Any]))
+      .map(ch => (if (ch.isInstanceOf[js.Array[_]]) ch.asInstanceOf[js.Array[ReactNode]] else js.Array(ch.asInstanceOf[ReactNode])))
+    ch.getOrElse(js.Array[ReactNode]())
+  }
+
   def this(name: String) {
     this()
     this.asInstanceOf[js.Dynamic].constructor.displayName = name
