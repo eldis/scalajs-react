@@ -54,7 +54,7 @@ abstract class RawComponent extends js.Any {
   @JSName("setState")
   def setStateRaw(s: Wrapped[State]): Unit = js.native
 
-  def initialState: State = js.native
+  def initialState: State
 
   def render(): ReactNode
 
@@ -68,6 +68,8 @@ abstract class RawComponent extends js.Any {
 abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawComponent {
 
   type Props = P
+
+  var stateInitialized = false
 
   @JSName("propsImpl")
   def props: Props = implicitly[UnwrapNative[F]].unwrap(propsNative)
@@ -91,8 +93,9 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
 
   @JSName("stateImpl")
   def state: State = {
-    if (stateRaw.asInstanceOf[js.Any] == null && this.asInstanceOf[js.Dynamic].initialState != null) {
+    if (stateInitialized == false) {
       this.asInstanceOf[js.Dynamic].state = Wrapped(initialState.asInstanceOf[js.Any])
+      stateInitialized = true
     }
     stateRaw.get
   }

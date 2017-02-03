@@ -22,6 +22,10 @@ object Stateful {
   @ScalaJSDefined
   class NativeComponent extends NativeComponentBase[NativeProps]("Stateful.native") {
 
+    type State = Unit
+
+    def initialState = ()
+
     def render = <.p()(props.message)
   }
 
@@ -34,6 +38,10 @@ object Stateful {
 
   @ScalaJSDefined
   class ScalaComponent extends Component[ScalaProps]("Stateful.scala") {
+
+    type State = Unit
+
+    def initialState = ()
 
     def render = <.p()(props.message)
   }

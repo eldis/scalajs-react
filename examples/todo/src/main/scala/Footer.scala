@@ -17,7 +17,9 @@ case class FooterProps(
 @ScalaJSDefined
 class Footer extends Component[FooterProps]("Footer") {
 
-  override type State = Nothing
+  type State = Unit
+
+  def initialState = ()
 
   def filterLink(f: TodoFilter) = {
     val p = this.props
