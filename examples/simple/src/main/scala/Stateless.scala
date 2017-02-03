@@ -23,6 +23,12 @@ object Stateless {
     <.p()(p.message)
   }
 
+  val nativeComponentWithChildren = NativeFunctionalComponent.withChildren("Stateless.nativeWithChildren") { (p: NativeProps, ch: PropsChildren) =>
+    <.div()(
+      nativeComponent(p),
+      ch
+    )
+  }
   case class ScalaProps(
     message: String
   )

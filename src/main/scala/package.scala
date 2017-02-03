@@ -122,6 +122,7 @@ package object react extends PropsImplicits {
   // Wrapper object for scalajs properties
   @js.native
   trait Wrapped[T] extends js.Any {
+    @JSName("sjs_p")
     val get: T = js.native
     val key: js.UndefOr[String] = js.native
   }
@@ -129,7 +130,7 @@ package object react extends PropsImplicits {
   object Wrapped {
     def apply[T](value: T, key: js.UndefOr[String] = js.undefined): Wrapped[T] =
       js.Dynamic.literal(
-        get = value.asInstanceOf[js.Any],
+        sjs_p = value.asInstanceOf[js.Any],
         key = key
       ).asInstanceOf[Wrapped[T]]
   }
