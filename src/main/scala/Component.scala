@@ -24,6 +24,7 @@ abstract class RawComponent extends js.Any {
 
   protected def componentWillUpdate(nextProps: js.Any, nextState: Wrapped[State]): Unit = js.native
   protected def componentDidUpdate(prevProps: js.Any, prevState: Wrapped[State]): Unit = js.native
+  protected def componentWillMount(): Unit = js.native
   protected def componentDidMount(): Unit = js.native
   protected def componentWillUnmount(): Unit = js.native
 }
@@ -66,10 +67,6 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
 
   @JSName("stateImpl")
   def state: State = {
-    if (stateInitialized == false) {
-      this.asInstanceOf[js.Dynamic].state = Wrapped(initialState.asInstanceOf[js.Any])
-      stateInitialized = true
-    }
     stateRaw.get
   }
 
@@ -80,12 +77,22 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
 
   @JSName("componentWillUpdate")
   override protected def componentWillUpdate(nextProps: js.Any, nextState: Wrapped[State]): Unit = {
-    willUpdate(implicitly[UnwrapNative[F]].unwrap(nextProps), Option(nextState).map(_.get))
+    willUpdate(implicitly[UnwrapNative[F]].unwrap(nextProps), nextState.get)
   }
 
   @JSName("componentDidUpdate")
   override protected def componentDidUpdate(prevProps: js.Any, prevState: Wrapped[State]): Unit = {
-    didUpdate(implicitly[UnwrapNative[F]].unwrap(prevProps), Option(prevState).map(_.get))
+    didUpdate(implicitly[UnwrapNative[F]].unwrap(prevProps), prevState.get)
+  }
+
+  @JSName("componentWillMount")
+  override protected def componentWillMount(): Unit = {
+    if (stateInitialized == false) {
+      val s = Wrapped(initialState)
+      setStateRaw(s)
+      stateInitialized = true
+    }
+    willMount()
   }
 
   @JSName("componentDidMount")
@@ -98,8 +105,9 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
     willUnmount()
   }
 
-  def willUpdate(nextProps: Props, nextState: Option[State]): Unit = {}
-  def didUpdate(prevProps: Props, prevState: Option[State]): Unit = {}
+  def willUpdate(nextProps: Props, nextState: State): Unit = {}
+  def didUpdate(prevProps: Props, prevState: State): Unit = {}
+  def willMount(): Unit = {}
   def didMount(): Unit = {}
   def willUnmount(): Unit = {}
 }
