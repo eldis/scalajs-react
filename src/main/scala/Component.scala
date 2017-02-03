@@ -54,7 +54,8 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
   @JSName("createElement")
   def apply(p: Props, children: ReactNode*): ReactDOMElement = {
     val c = this.asInstanceOf[js.Dynamic].constructor
-    JSReact.createElement(c, implicitly[WrapToNative[P]].wrap(p), children: _*)
+    var props = implicitly[WrapToNative[P]].wrap(p)
+    JSReact.createElement(c, props, children: _*)
   }
 
   @JSName("createElementNoProps")

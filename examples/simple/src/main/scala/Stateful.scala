@@ -10,12 +10,14 @@ object Stateful {
   @js.native
   trait NativeProps extends js.Object {
     val message: String = js.native
+    val key: js.UndefOr[js.Any] = js.native
   }
 
   object NativeProps {
-    def apply(message: String): NativeProps =
+    def apply(message: String, key: js.UndefOr[String] = js.undefined): NativeProps =
       js.Dynamic.literal(
-        message = message
+        message = message,
+        key = key
       ).asInstanceOf[NativeProps]
   }
 

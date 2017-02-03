@@ -17,6 +17,7 @@ object FunctionalComponent {
     apply("FunctionalComponent")(f)
 
   @inline implicit class FunctionalComponentOps[P](private val f: FunctionalComponent[P]) {
+    def withKey(key: js.Any)(p: P) = JSReact.createElement(f, Wrapped(p, key))
     def apply(p: P) = JSReact.createElement(f, Wrapped(p))
   }
 
@@ -36,6 +37,7 @@ object FunctionalComponent {
     withChildren("FunctionalComponent.withChildren")(f)
 
   @inline implicit class FunctionalComponentWithChildrenOps[P](private val f: WithChildren[P]) {
+    def withKey(key: js.Any)(p: P, ch: ReactNode*) = JSReact.createElement(f, Wrapped(p, key), ch: _*)
     def apply(p: P, ch: ReactNode*) = JSReact.createElement(f, Wrapped(p), ch: _*)
   }
 

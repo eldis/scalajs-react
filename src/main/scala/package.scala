@@ -124,11 +124,11 @@ package object react extends PropsImplicits {
   trait Wrapped[T] extends js.Any {
     @JSName("sjs_p")
     val get: T = js.native
-    val key: js.UndefOr[String] = js.native
+    val key: js.UndefOr[js.Any] = js.native
   }
 
   object Wrapped {
-    def apply[T](value: T, key: js.UndefOr[String] = js.undefined): Wrapped[T] =
+    def apply[T](value: T, key: js.UndefOr[js.Any] = js.undefined): Wrapped[T] =
       js.Dynamic.literal(
         sjs_p = value.asInstanceOf[js.Any],
         key = key
@@ -136,6 +136,33 @@ package object react extends PropsImplicits {
   }
 
   type NativeComponent[P <: js.Any] = ComponentBase[Identity, P]
-  type Component[P] = ComponentBase[Wrapped, P]
+  @ScalaJSDefined
+  abstract class Component[P](name: String) extends ComponentBase[Wrapped, P](name) {
+
+    type This = Component[P]
+
+    var key: js.UndefOr[js.Any] = js.undefined
+
+    def withKey(key: js.Any): This = {
+      this.key = key
+      this
+    }
+
+    @JSName("createElement")
+    override def apply(p: Props, children: ReactNode*): ReactDOMElement = {
+      val c = this.asInstanceOf[js.Dynamic].constructor
+      var props = implicitly[WrapToNative[P]].wrap(p).asInstanceOf[js.Dynamic]
+      this.key.map(props.key = _)
+      JSReact.createElement(c, props, children: _*)
+    }
+
+    @JSName("createElementNoProps")
+    override def apply(children: ReactNode*): ReactDOMElement = {
+      val c = this.asInstanceOf[js.Dynamic].constructor
+      var props = js.Dynamic.literal(key = key)
+      JSReact.createElement(c, props, children: _*)
+    }
+
+  }
 
 }

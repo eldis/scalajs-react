@@ -111,7 +111,7 @@ class TodoList extends Component[Nothing]("TodoList") {
       )(),
       <.ul(^.className := "todo-list")(
         filteredTodos.map({ todo =>
-          TodoItem(
+          TodoItem.withKey(todo.id.toString)(
             TodoItemProps(
               todo = todo,
               isEditing = state.editing.contains(todo.id),
