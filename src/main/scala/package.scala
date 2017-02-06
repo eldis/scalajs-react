@@ -42,6 +42,10 @@ package object react extends PropsImplicits {
   @js.native
   object JSReact extends JSReact
 
+  /** Native component type */
+  @js.native
+  trait JSComponent[P <: js.Any] extends js.Object
+
   object React {
 
     def createElement(
@@ -87,6 +91,12 @@ package object react extends PropsImplicits {
       tag: js.ConstructorTag[C],
       children: ReactNode*
     ): ReactDOMElement = JSReact.createElement(tag.constructor, js.undefined, children: _*)
+
+    def createElement[P <: js.Any](
+      c: JSComponent[P],
+      props: P,
+      children: ReactNode*
+    ): ReactDOMElement = JSReact.createElement(c, props, children: _*)
 
   }
 
