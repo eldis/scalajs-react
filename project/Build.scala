@@ -9,7 +9,8 @@ object ScalaJSReact {
 
   object Versions {
     val scala = "2.11.8"
-    val scalaJsReact = "0.11.3"
+    val japgollyScalaJsReact = "0.11.3"
+    val scalaJsDom = "0.9.1"
 
     val scalatest = "3.0.1"
   }
@@ -27,9 +28,11 @@ object ScalaJSReact {
   }
 
   object Dependencies {
-    lazy val scalaJsReact = "com.github.japgolly.scalajs-react" %%%! "core" % Versions.scalaJsReact
+    lazy val japgollyScalaJsReact = "com.github.japgolly.scalajs-react" %%%! "core" % Versions.japgollyScalaJsReact
 
     lazy val scalatest = "org.scalatest" %%%! "scalatest" % Versions.scalatest % "test"
+
+    lazy val scalaJsDom = "org.scala-js" %%%! "scalajs-dom" % Versions.scalaJsDom
 
     lazy val jsReact = Seq(
       "react" -> JsVersions.react,
@@ -71,16 +74,15 @@ object ScalaJSReact {
 
     def react(dev: Boolean = false): PC =
       _.settings(
-        libraryDependencies += Dependencies.scalaJsReact,
         if(dev)
           npmDevDependencies in Compile ++= Dependencies.jsReact
         else
           npmDependencies in Compile ++= Dependencies.jsReact
       )
 
-    def exampleProject(prjName: String, useReact: Boolean = false): PC = { p: Project =>
+    def exampleProject(prjName: String): PC = { p: Project =>
       p.in(file("examples") / prjName)
-        .configure(scalajsProject, jsBundler)
+        .configure(scalajsProject, jsBundler, react())
         .settings(
           name := prjName,
 
@@ -92,11 +94,6 @@ object ScalaJSReact {
           webpackConfigFile in fastOptJS := Some(baseDirectory.value / "config" / "webpack.config.js"),
           webpackConfigFile in fullOptJS := Some(baseDirectory.value / "config" / "webpack.config.js")
         )
-      } compose { pc =>
-        if(useReact)
-          pc.configure(react())
-        else
-          pc
       }
 
     def publish: PC =
@@ -119,29 +116,41 @@ object ScalaJSReact {
         Settings.scalajsProject, Settings.jsBundler, Settings.publish, Settings.react(true)
       )
       .settings(
-        name := "scalajs-react"
+        name := "scalajs-react",
+        libraryDependencies += Dependencies.scalaJsDom
       )
+
+    lazy val scalaJsReactCompat = project.in(file("compat"))
+      .configure(
+        Settings.scalajsProject, Settings.jsBundler, Settings.publish, Settings.react(true)
+      )
+      .settings(
+        name := "scalajs-react-compat",
+        libraryDependencies += Dependencies.japgollyScalaJsReact
+      )
+      .dependsOn(scalaJsReact)
 
     lazy val exSimple = project
       .configure(
-        Settings.exampleProject(
-          "simple",
-          useReact = true)
+        Settings.exampleProject("simple")
       )
       .dependsOn(scalaJsReact)
 
     lazy val exTodomvc = project
       .configure(
-        Settings.exampleProject(
-          "todo",
-          useReact = true
-        )
+        Settings.exampleProject("todo")
       )
       .settings(
         npmDependencies in Compile ++= Dependencies.jsTodoExample,
         npmDevDependencies in Compile ++= Dependencies.jsTodoExampleDev
       )
       .dependsOn(scalaJsReact)
+
+    lazy val exCompat = project
+      .configure(
+        Settings.exampleProject("compat")
+      )
+      .dependsOn(scalaJsReact, scalaJsReactCompat)
 
   }
 
