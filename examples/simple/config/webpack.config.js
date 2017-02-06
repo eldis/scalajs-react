@@ -12,9 +12,21 @@ cfg.module.loaders.push({
   loader: 'html'
 });
 
+cfg.resolve = cfg.resolve || {};
+cfg.resolve.alias = cfg.resolve.alias || {};
+cfg.resolve.alias["JsComponent"] = path.join(rootDir, 'src/main/js/JsComponent.js');
+cfg.resolve.root = cfg.resolve.root || [];
+cfg.resolve.root.push(path.join(__dirname, 'node_modules'));
+cfg.resolveLoader = cfg.resolveLoader || {};
+cfg.resolveLoader.root = cfg.resolveLoader.root || [];
+cfg.resolveLoader.root.push(path.join(__dirname, 'node_modules'));
+
 cfg.plugins = cfg.plugins || [];
 cfg.plugins.push(new HtmlWebpackPlugin({
   template: path.join(rootDir, 'src/main/assets/index.html')
 }));
+cfg.bail = true;
+
+console.log(JSON.stringify(cfg, undefined, 2));
 
 module.exports = cfg;

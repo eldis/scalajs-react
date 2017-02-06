@@ -1,6 +1,7 @@
 package eldis.react.examples.simple
 
 import scalajs.js
+import js.annotation.JSImport
 import eldis.react._
 import vdom.prefix_<^._
 import org.scalajs.dom
@@ -28,7 +29,9 @@ object Main extends js.JSApp {
       Stateful.ScalaComponent.withKey("6")(
         Stateful.ScalaProps("Hello from scala stateful component with properties"),
         <.p()("*** Hi, I'm the child of scala statfull component")
-      )
+      ),
+      <.h4()("And now create native element:"),
+      Native("Hello from native!")
     )
   }
 
