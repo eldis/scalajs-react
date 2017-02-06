@@ -4,7 +4,7 @@ import scalajs.js
 import js.annotation.JSImport
 import eldis.react._
 
-object Native {
+object JS {
 
   @js.native
   trait Props extends js.Any {

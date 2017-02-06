@@ -30,8 +30,8 @@ object Main extends js.JSApp {
         Stateful.ScalaProps("Hello from scala stateful component with properties"),
         <.p()("*** Hi, I'm the child of scala statfull component")
       ),
-      <.h4()("And now create native element:"),
-      Native("Hello from native!")
+      <.h4()("And now create JS element:"),
+      JS("Hello from JS!")
     )
   }
 

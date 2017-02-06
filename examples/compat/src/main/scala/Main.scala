@@ -20,7 +20,8 @@ object Main extends JSApp {
       JapgollyComponents.component(
         "Hello from japgolly's scalajs-react",
         fc("Hello from eldis/scalajs-react")
-      )
+      ),
+      JapgollyComponents.fromJs(JapgollyComponents.JsProps("Hello from JS component!"))
     )
 
   def main() {

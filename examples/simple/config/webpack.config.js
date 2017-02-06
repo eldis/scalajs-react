@@ -27,6 +27,4 @@ cfg.plugins.push(new HtmlWebpackPlugin({
 }));
 cfg.bail = true;
 
-console.log(JSON.stringify(cfg, undefined, 2));
-
 module.exports = cfg;

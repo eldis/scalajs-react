@@ -21,4 +21,6 @@ package object compat {
 
   implicit def japgollyReactComponentUToEsNode(c: japgolly.ReactComponentU[_, _, _, _]): es.ReactNode =
     c.asInstanceOf[es.ReactNode]
+  implicit def japgollyReactComponentUToEsNode(c: japgolly.JsComponentU[_, _, _]): es.ReactNode =
+    c.asInstanceOf[es.ReactNode]
 }
