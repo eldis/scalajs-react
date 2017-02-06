@@ -103,11 +103,11 @@ package object react extends PropsImplicits {
   @js.native
   trait ReactDOM extends js.Object {
 
-    def render[N <: ReactNode](
-      node: N,
+    def render(
+      node: ReactNode,
       container: jsdom.Node,
       callback: js.UndefOr[js.ThisFunction] = js.undefined
-    ): Ref[N] = js.native
+    ): Unit = js.native
 
   }
 
