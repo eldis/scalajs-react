@@ -4,6 +4,7 @@ trait HtmlAttrs {
   final lazy val className = attr("className")
   final lazy val href = attr("href")
   final lazy val ref = attr("ref")
+  final lazy val key = attr("key")
   final lazy val action = attr("action")
   final lazy val method = attr("method")
   final lazy val id = attr("id")
