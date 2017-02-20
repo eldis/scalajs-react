@@ -15,13 +15,14 @@ package object vdom extends vdom.Events {
 
   @inline def attr(name: String): AttrName = AttrName(name)
   @inline implicit def cvtStringsPairToAttr(p: (String, String)): Attr = AttrName(p._1) := AttrValue(p._2)
+  @inline implicit def cvtStringsPairToAttrs(p: (String, String)): Attrs = Attrs(AttrName(p._1) := AttrValue(p._2))
 
   @inline implicit final class optionalMarkupOps(flag: Boolean) {
-    def ?=(attr: Attr): Attr =
+    def ?=(attr: Attr): Attrs =
       if (flag)
         attr
       else
-        attr.name := AttrValue(js.undefined)
+        Attrs.zero
   }
 
   @inline implicit def cvtStringToAttrName(s: String): AttrName = AttrName(s)
