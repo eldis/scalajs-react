@@ -50,6 +50,36 @@ class VDomSpec extends FunSpec with Matchers {
 
     }
 
+    it("can receive options as values") {
+
+      var v0 = 0
+      val f0 = () => { v0 += 1 }
+
+      var v1 = Seq[String]()
+      val f1 = (s: String) => { v1 = v1 :+ s }
+
+      val s = "foo"
+
+      val attrs = Attrs(
+        "sSome" :=? Some(s),
+        "sNone" :=? (None: Option[String]),
+        "f0Some" -->? Some(f0),
+        "f0None" -->? (None: Option[f0.type]),
+        "f1Some" ==>? Some(f1),
+        "f1None" ==>? (None: Option[f1.type])
+      ).toJs.asInstanceOf[js.Dynamic]
+
+      attrs.sSome shouldBe s
+      attrs.hasOwnProperty("sNone") shouldBe false
+
+      attrs.f0Some()
+      v0 shouldBe 1
+      attrs.hasOwnProperty("f0None") shouldBe false
+
+      attrs.f1Some("abc")
+      v1 shouldBe Seq("abc")
+      attrs.hasOwnProperty("f1None") shouldBe false
+    }
   }
 
   describe("HTML tags") {
