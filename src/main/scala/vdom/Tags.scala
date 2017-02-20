@@ -4,10 +4,10 @@ import scalajs.js
 
 import eldis.react._
 
-class Tag(name: String, tagAttrs: List[Attr] = Nil) {
-  def apply(attrs: Attr*)(children: ReactNode*): ReactDOMElement = React.createElement(
+class Tag(name: String, tagAttrs: List[Attrs] = Nil) {
+  def apply(attrs: Attrs*)(children: ReactNode*): ReactDOMElement = React.createElement(
     name,
-    Attrs((tagAttrs ++ attrs): _*).toJs,
+    Attrs.concat(tagAttrs ++ attrs).toJs,
     children: _*
   )
 }
