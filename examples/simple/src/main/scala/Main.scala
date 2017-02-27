@@ -9,6 +9,9 @@ import org.scalajs.dom
 object Main extends js.JSApp {
 
   def render(): ReactNode = {
+    implicit val sShow = new WithTypeclass.Show[String] {
+      override def show(s: String) = "*** " + s
+    }
     <.div()(
       <.h4()("Create stateless elements:"),
       Stateless.nativeComponent(Stateless.NativeProps("Hello from native stateless component", key = "1")),
@@ -31,7 +34,10 @@ object Main extends js.JSApp {
         <.p()("*** Hi, I'm the child of scala statfull component")
       ),
       <.h4()("And now create JS element:"),
-      JS("Hello from JS!")
+      JS("Hello from JS!"),
+      <.h4()("Here is the example of the components using typeclasses:"),
+      WithTypeclass.StatefulComponent(List("Stateful Element 1", "Stateful Element 2", "Stateful Element 3")),
+      WithTypeclass.StatelessComponent(List("Stateless Element 1", "Stateless Element 2", "Stateless Element 3"))
     )
   }
 
