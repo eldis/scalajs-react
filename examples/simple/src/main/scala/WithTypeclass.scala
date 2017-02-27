@@ -14,45 +14,35 @@ object WithTypeclass {
 
   type Props[T] = Seq[T]
 
-  trait PropsImpl {
-    type PT
-    val el: Props[PT]
-    val show: Show[PT]
-  }
+  type PropsImpl[T] = Tuple2[Props[T], Show[T]]
 
   @ScalaJSDefined
-  class StatefulComponent extends Component[PropsImpl]("WithTypeclass.stateful") {
+  class StatefulComponent[T] extends Component[PropsImpl[T]]("WithTypeclass.stateful") {
 
-    type State = Unit
+    type State = Seq[T]
 
-    def initialState = ()
+    def initialState = props._1
 
     def render = {
-      val p = props // We need it because ``props`` is function, and
-      // the compiler thinks that the type PropsImpl#PT
-      // can be different on each call
-      val (e, s) = (p.el, p.show)
+      val (_, s) = props
+      val p = state
       <.ul()(
-        e.map(v => <.li()(s.show(v))): _*
+        p.map(v => <.li()(s.show(v))): _*
       )
     }
-
-    @JSName("createStatefullComponent")
-    def apply[T](p: WithTypeclass.Props[T])(implicit s: Show[T]): ReactDOMElement =
-      apply(
-        new PropsImpl {
-          type PT = T
-          val el = p
-          val show = s
-        }
-      )
   }
 
-  @ScalaJSDefined
-  object StatefulComponent extends StatefulComponent
+  object StatefulComponent {
+    def apply[T](p: WithTypeclass.Props[T])(implicit s: Show[T]): ReactDOMElement = {
+      React.createElement[PropsImpl[T], Wrapped, StatefulComponent[T]](
+        implicitly[js.ConstructorTag[StatefulComponent[T]]],
+        (p, s)
+      )
+    }
+  }
 
-  val statelessComponentImpl = FunctionalComponent("WithTypeclass.stateless") { (p: PropsImpl) =>
-    val (e, s) = (p.el, p.show)
+  def statelessComponentImpl[T] = FunctionalComponent("WithTypeclass.stateless") { (p: PropsImpl[T]) =>
+    val (e, s) = p
     <.ul()(
       e.map(v => <.li()(s.show(v))): _*
     )
@@ -60,12 +50,8 @@ object WithTypeclass {
 
   def StatelessComponent[T](p: Props[T])(implicit s: Show[T]): ReactDOMElement =
     React.createElement(
-      statelessComponentImpl,
-      new PropsImpl {
-        type PT = T
-        val el = p
-        val show = s
-      }
+      statelessComponentImpl[T],
+      (p, s)
     )
 
 }
