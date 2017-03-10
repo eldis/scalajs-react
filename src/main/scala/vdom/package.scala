@@ -28,6 +28,7 @@ package object vdom extends vdom.Events {
   @inline implicit def cvtStringToAttrName(s: String): AttrName = AttrName(s)
   @inline implicit def cvtStringToAttrValue(s: String): AttrValue = AttrValue(s)
   @inline implicit def cvtBoolToAttrValue(v: Boolean): AttrValue = AttrValue(v)
+  @inline implicit def cvtIntToAttrValue(v: Int): AttrValue = AttrValue(v)
   @inline implicit def cvtFunctionToAttrValue(v: js.Function): AttrValue = AttrValue(v)
   @inline implicit def cvtAttrsToAttrValue(attrs: Attrs): AttrValue = AttrValue(attrs.toJs)
 
