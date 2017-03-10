@@ -64,5 +64,6 @@ trait HtmlAttrs {
   final lazy val contentAttr = attr("content")
   final lazy val httpEquiv = attr("httpEquiv")
   final lazy val media = attr("media")
-
+  final lazy val colSpan = attr("colSpan")
+  final lazy val rowSpan = attr("rowSpan")
 }
