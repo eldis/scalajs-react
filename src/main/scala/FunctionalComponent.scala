@@ -36,6 +36,18 @@ object FunctionalComponent {
   def withChildren[P](f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] =
     withChildren("FunctionalComponent.withChildren")(f)
 
+  @inline
+  implicit def functionalComponentIsNativeComponentType[P](
+    c: FunctionalComponent[P]
+  ): NativeComponentType[Wrapped[P]] =
+    c.asInstanceOf[NativeComponentType[Wrapped[P]]]
+
+  @inline
+  implicit def functionalComponentWithChildrenIsNativeComponentTypeWithChildren[P](
+    c: FunctionalComponent.WithChildren[P]
+  ): NativeComponentType.WithChildren[Wrapped[P]] =
+    c.asInstanceOf[NativeComponentType.WithChildren[Wrapped[P]]]
+
   @inline implicit class FunctionalComponentWithChildrenOps[P](private val f: WithChildren[P]) {
     def withKey(key: js.Any)(p: P, ch: ReactNode*) = JSReact.createElement(f, Wrapped(p, key), ch: _*)
     def apply(p: P, ch: ReactNode*) = JSReact.createElement(f, Wrapped(p), ch: _*)
@@ -74,6 +86,18 @@ object NativeFunctionalComponent {
 
   def withChildren[P <: js.Any](f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] =
     withChildren("NativeFunctionalComponent.withChildren")(f)
+
+  @inline
+  implicit def nativeFunctionalComponentIsNativeComponentType[P <: js.Any](
+    c: NativeFunctionalComponent[P]
+  ): NativeComponentType[P] =
+    c.asInstanceOf[NativeComponentType[P]]
+
+  @inline
+  implicit def nativeFunctionalComponentWithChildrenIsNativeComponentTypeWithChildren[P <: js.Any](
+    c: NativeFunctionalComponent.WithChildren[P]
+  ): NativeComponentType.WithChildren[P] =
+    c.asInstanceOf[NativeComponentType.WithChildren[P]]
 
   @inline implicit class NativeFunctionalComponentWithChildrenOps[P <: js.Any](private val f: WithChildren[P]) {
     def apply(p: P, ch: ReactNode*) = JSReact.createElement(f, p, ch: _*)

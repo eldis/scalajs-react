@@ -111,3 +111,22 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
   def didMount(): Unit = {}
   def willUnmount(): Unit = {}
 }
+
+object ComponentBase {
+
+  import scala.language.implicitConversions
+
+  @inline
+  implicit def identityComponentBaseIsNativeComponentTypeWithChildren[P <: js.Any](
+    c: ComponentBase[Identity, P]
+  ): NativeComponentType.WithChildren[P] =
+    c.asInstanceOf[js.Dynamic].constructor
+      .asInstanceOf[NativeComponentType.WithChildren[P]]
+
+  @inline
+  implicit def wrappedComponentBaseIsNativeComponentTypeWithChildren[P](
+    c: ComponentBase[Wrapped, P]
+  ): NativeComponentType.WithChildren[Wrapped[P]] =
+    c.asInstanceOf[js.Dynamic].constructor
+      .asInstanceOf[NativeComponentType.WithChildren[Wrapped[P]]]
+}

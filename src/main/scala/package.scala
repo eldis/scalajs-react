@@ -42,10 +42,6 @@ package object react extends PropsImplicits {
   @js.native
   object JSReact extends JSReact
 
-  /** Native component type */
-  @js.native
-  trait JSComponent[P <: js.Any] extends js.Object
-
   object React {
 
     def createElement(
