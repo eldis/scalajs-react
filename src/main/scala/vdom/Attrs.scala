@@ -32,6 +32,9 @@ class Attrs(private val attrs: Seq[Attr]) {
 }
 
 object Attrs {
+
+  import scala.language.implicitConversions
+
   def apply(attrs: Attr*): Attrs = new Attrs(attrs)
   def apply(attr0: Attrs, attrs: Attrs*): Attrs = concat(attr0 +: attrs)
 

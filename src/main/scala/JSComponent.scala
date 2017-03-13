@@ -8,6 +8,8 @@ trait JSComponent[P <: js.Any] extends js.Object
 
 object JSComponent {
 
+  import scala.language.implicitConversions
+
   @inline
   implicit def jsComponentIsFunctionalComponentWithChildren[P <: js.Any](
     c: JSComponent[P]

@@ -1,5 +1,7 @@
 package eldis.react
 
+import scala.language.higherKinds
+
 import scalajs.js
 
 trait PropsImplicits {

@@ -1,6 +1,8 @@
 package eldis.react
 
-import scalajs.js
+import scala.language.higherKinds
+
+import scala.scalajs.js
 import js.annotation._
 
 @JSImport("react", "Component")

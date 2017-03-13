@@ -36,6 +36,8 @@ object FunctionalComponent {
   def withChildren[P](f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] =
     withChildren("FunctionalComponent.withChildren")(f)
 
+  import scala.language.implicitConversions
+
   @inline
   implicit def functionalComponentIsNativeComponentType[P](
     c: FunctionalComponent[P]
@@ -86,6 +88,8 @@ object NativeFunctionalComponent {
 
   def withChildren[P <: js.Any](f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] =
     withChildren("NativeFunctionalComponent.withChildren")(f)
+
+  import scala.language.implicitConversions
 
   @inline
   implicit def nativeFunctionalComponentIsNativeComponentType[P <: js.Any](

@@ -8,6 +8,8 @@ import org.scalajs.{ dom => jsdom }
 
 package object react extends PropsImplicits {
 
+  import scala.language.implicitConversions
+
   @js.native
   trait ReactNode extends js.Object
 
