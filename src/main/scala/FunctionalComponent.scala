@@ -17,8 +17,8 @@ object FunctionalComponent {
     apply("FunctionalComponent")(f)
 
   @inline implicit class FunctionalComponentOps[P](private val f: FunctionalComponent[P]) {
-    def withKey(key: js.Any)(p: P) = JSReact.createElement(f, Wrapped(p, key))
-    def apply(p: P) = JSReact.createElement(f, Wrapped(p))
+    def withKey(key: js.Any)(p: P) = React.createElement(f, Wrapped(p, key))
+    def apply(p: P) = React.createElement(f, Wrapped(p))
   }
 
   @js.native
@@ -49,8 +49,8 @@ object FunctionalComponent {
     c.asInstanceOf[NativeComponentType.WithChildren[Wrapped[P]]]
 
   @inline implicit class FunctionalComponentWithChildrenOps[P](private val f: WithChildren[P]) {
-    def withKey(key: js.Any)(p: P, ch: ReactNode*) = JSReact.createElement(f, Wrapped(p, key), ch: _*)
-    def apply(p: P, ch: ReactNode*) = JSReact.createElement(f, Wrapped(p), ch: _*)
+    def withKey(key: js.Any)(p: P, ch: ReactNode*) = React.createElement(f, Wrapped(p, key), ch)
+    def apply(p: P, ch: ReactNode*) = React.createElement(f, Wrapped(p), ch)
   }
 
 }
@@ -69,7 +69,7 @@ object NativeFunctionalComponent {
     apply("NativeFunctionalComponent")(f)
 
   @inline implicit class NativeFunctionalComponentOps[P <: js.Any](private val f: NativeFunctionalComponent[P]) {
-    def apply(p: P) = JSReact.createElement(f, p)
+    def apply(p: P) = React.createElement(f, p)
   }
 
   @js.native
@@ -100,6 +100,6 @@ object NativeFunctionalComponent {
     c.asInstanceOf[NativeComponentType.WithChildren[P]]
 
   @inline implicit class NativeFunctionalComponentWithChildrenOps[P <: js.Any](private val f: WithChildren[P]) {
-    def apply(p: P, ch: ReactNode*) = JSReact.createElement(f, p, ch: _*)
+    def apply(p: P, ch: ReactNode*) = React.createElement(f, p, ch)
   }
 }

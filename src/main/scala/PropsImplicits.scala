@@ -6,35 +6,27 @@ trait PropsImplicits {
 
   type Identity[P] = P
 
-  trait UnwrapNative[F[_]] {
-    def unwrap[P](v: js.Any): P
+  trait Wrapper[F[_], P] {
+    type Out = js.Any with F[P]
+    def wrap(v: P): Out
+    def unwrap(v: F[P]): P
   }
 
-  object UnwrapNative {
-    implicit val IdentityUnwrapNative: UnwrapNative[Identity] = new UnwrapNative[Identity] {
-      def unwrap[P](v: js.Any): P = v.asInstanceOf[P]
-    }
+  object Wrapper {
 
-    implicit val WrappedUnwrapNative: UnwrapNative[Wrapped] = new UnwrapNative[Wrapped] {
-      def unwrap[P](v: js.Any): P = v.asInstanceOf[Wrapped[P]].get
-    }
+    def apply[F[_], P](implicit w: Wrapper[F, P]): w.type = w
+
+    implicit def identityWrapper[P <: js.Any]: Wrapper[Identity, P] =
+      new Wrapper[Identity, P] {
+        def wrap(v: P): Out = v
+        def unwrap(v: Identity[P]): P = v
+      }
+
+    implicit def wrappedWrapper[P]: Wrapper[Wrapped, P] =
+      new Wrapper[Wrapped, P] {
+        def wrap(v: P): Out = Wrapped(v)
+        def unwrap(v: Wrapped[P]): P = v.get
+      }
   }
-
-  trait WrapToNative[P] {
-    def wrap(v: P): js.Any
-  }
-
-  object WrapToNative extends LowPriorityImplicits {
-    implicit def identity[P <: js.Any]: WrapToNative[P] = new WrapToNative[P] {
-      def wrap(v: P) = v
-    }
-  }
-
-  trait LowPriorityImplicits {
-    implicit def AWrapToNative[P]: WrapToNative[P] = new WrapToNative[P] {
-      def wrap(v: P) = Wrapped(v).asInstanceOf[js.Any]
-    }
-  }
-
 }
 
