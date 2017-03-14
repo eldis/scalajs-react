@@ -1,0 +1,13 @@
+# See http://about.travis-ci.org/docs/user/build-configuration/
+language: scala
+sudo: false
+
+scala:
+  - 2.11.8
+  - 2.12.1
+
+jdk:
+  - oraclejdk8
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION scalaJsReact/test scalaJsReactCompat/test 'exSimple/fastOptJS::webpack' 'exTodomvc/fastOptJS::webpack' 'exCompat/fastOptJS::webpack'
