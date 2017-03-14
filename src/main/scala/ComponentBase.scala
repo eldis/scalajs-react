@@ -1,6 +1,8 @@
 package eldis.react
 
-import scalajs.js
+import scala.language.higherKinds
+
+import scala.scalajs.js
 import js.annotation._
 
 @JSImport("react", "Component")
@@ -30,14 +32,18 @@ abstract class RawComponent extends js.Any {
 }
 
 @ScalaJSDefined
-abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawComponent {
+abstract class ComponentBase[F[_], P](
+    implicit
+    wrapper: Wrapper[F, P]
+) extends RawComponent {
 
   type Props = P
+  type WrappedProps = js.Any with F[P]
 
   var stateInitialized = false
 
   @JSName("propsImpl")
-  def props: Props = implicitly[UnwrapNative[F]].unwrap(propsNative)
+  def props: Props = wrapper.unwrap(propsNative.asInstanceOf[F[P]])
 
   def propsChildren: js.Array[ReactNode] = {
     //TODO: cache it and invalidate when receive new props
@@ -47,20 +53,24 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
     ch.getOrElse(js.Array[ReactNode]())
   }
 
-  def this(name: String) {
-    this()
+  def this(name: String)(
+    implicit
+    wrapper: Wrapper[F, P]
+  ) {
+    this()(wrapper)
     this.asInstanceOf[js.Dynamic].constructor.displayName = name
   }
 
   @JSName("createElement")
   def apply(p: Props, children: ReactNode*): ReactDOMElement = {
-    val c = this.asInstanceOf[js.Dynamic].constructor
-    var props = implicitly[WrapToNative[P]].wrap(p)
-    JSReact.createElement(c, props, children: _*)
+
+    val props: js.Any with F[P] = wrapper.wrap(p)
+    React.createElement(ComponentBase.componentBaseIsNativeComponentTypeWithChildren(this), props, children)
   }
 
   @JSName("createElementNoProps")
   def apply(children: ReactNode*): ReactDOMElement = {
+    // TODO: This is unsafe and ugly
     val c = this.asInstanceOf[js.Dynamic].constructor
     JSReact.createElement(c, (), children: _*)
   }
@@ -77,12 +87,12 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
 
   @JSName("componentWillUpdate")
   override protected def componentWillUpdate(nextProps: js.Any, nextState: Wrapped[State]): Unit = {
-    willUpdate(implicitly[UnwrapNative[F]].unwrap(nextProps), nextState.get)
+    willUpdate(wrapper.unwrap(nextProps.asInstanceOf[F[P]]), nextState.get)
   }
 
   @JSName("componentDidUpdate")
   override protected def componentDidUpdate(prevProps: js.Any, prevState: Wrapped[State]): Unit = {
-    didUpdate(implicitly[UnwrapNative[F]].unwrap(prevProps), prevState.get)
+    didUpdate(wrapper.unwrap(prevProps.asInstanceOf[F[P]]), prevState.get)
   }
 
   @JSName("componentWillMount")
@@ -110,4 +120,24 @@ abstract class ComponentBase[F[_]: UnwrapNative, P: WrapToNative] extends RawCom
   def willMount(): Unit = {}
   def didMount(): Unit = {}
   def willUnmount(): Unit = {}
+}
+
+object ComponentBase {
+
+  import scala.language.implicitConversions
+
+  @inline
+  implicit def componentBaseIsNativeComponentTypeWithChildren[F[_], P](
+    c: ComponentBase[F, P]
+  // TODO: ComponentBase wrapping synchronization
+  ): NativeComponentType.WithChildren[c.WrappedProps] =
+    c.asInstanceOf[js.Dynamic].constructor
+      .asInstanceOf[NativeComponentType.WithChildren[c.WrappedProps]]
+
+  @inline
+  implicit def componentBaseTagIsNativeComponentTypeWithChildren[F[_], P, C <: ComponentBase[F, P]](
+    c: js.ConstructorTag[C]
+  // TODO: ComponentBase wrapping synchronization
+  ): NativeComponentType.WithChildren[C#WrappedProps] =
+    c.constructor.asInstanceOf[NativeComponentType.WithChildren[C#WrappedProps]]
 }

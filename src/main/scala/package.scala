@@ -8,6 +8,8 @@ import org.scalajs.{ dom => jsdom }
 
 package object react extends PropsImplicits {
 
+  import scala.language.implicitConversions
+
   @js.native
   trait ReactNode extends js.Object
 
@@ -42,62 +44,56 @@ package object react extends PropsImplicits {
   @js.native
   object JSReact extends JSReact
 
-  /** Native component type */
-  @js.native
-  trait JSComponent[P <: js.Any] extends js.Object
-
   object React {
 
     def createElement(
       tag: String,
       props: js.UndefOr[js.Object],
-      children: ReactNode*
+      children: Seq[ReactNode]
     ): ReactDOMElement = JSReact.createElement(tag, props, children: _*)
 
     def createElement(
       tag: String,
-      children: ReactNode*
+      children: Seq[ReactNode]
     ): ReactDOMElement = JSReact.createElement(tag, js.undefined, children: _*)
 
-    def createElement[P](
-      f: FunctionalComponent[P],
+    def createElement[P <: js.Any](
+      c: NativeComponentType[P],
       props: P
-    ): ReactDOMElement = JSReact.createElement(f, Wrapped(props))
-
-    def createElement[P](
-      f: FunctionalComponent.WithChildren[P],
-      props: P,
-      children: ReactNode*
-    ): ReactDOMElement = JSReact.createElement(f, Wrapped(props), children: _*)
+    ): ReactDOMElement =
+      JSReact.createElement(c, props)
 
     def createElement[P <: js.Any](
-      f: NativeFunctionalComponent[P],
+      c: NativeComponentType.WithChildren[P],
+      props: P,
+      children: Seq[ReactNode]
+    ): ReactDOMElement =
+      JSReact.createElement(c, props, children: _*)
+
+    def createElement[P, F[_]](
+      c: NativeComponentType[F[P] with js.Any],
       props: P
-    ): ReactDOMElement = JSReact.createElement(f, props)
+    )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
+      createElement[wrapper.Out](c, wrapper.wrap(props))
 
-    def createElement[P <: js.Any](
-      f: NativeFunctionalComponent.WithChildren[P],
+    def createElement[P, F[_]](
+      c: NativeComponentType.WithChildren[F[P] with js.Any],
       props: P,
-      children: ReactNode*
-    ): ReactDOMElement = JSReact.createElement(f, props, children: _*)
+      children: Seq[ReactNode]
+    )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
+      createElement[wrapper.Out](c, wrapper.wrap(props), children)
 
-    def createElement[P: WrapToNative, F[_]: UnwrapNative, C <: ComponentBase[F, P]](
-      tag: js.ConstructorTag[C],
-      props: P,
-      children: ReactNode*
-    ): ReactDOMElement = JSReact.createElement(tag.constructor, implicitly[WrapToNative[P]].wrap(props), children: _*)
+    // TODO: this is ugly - remove
+    def createElement(
+      c: NativeComponentType[Nothing]
+    ): ReactDOMElement =
+      JSReact.createElement(c, js.undefined)
 
-    def createElement[F[_], C <: ComponentBase[F, Nothing]](
-      tag: js.ConstructorTag[C],
-      children: ReactNode*
-    ): ReactDOMElement = JSReact.createElement(tag.constructor, js.undefined, children: _*)
-
-    def createElement[P <: js.Any](
-      c: JSComponent[P],
-      props: P,
-      children: ReactNode*
-    ): ReactDOMElement = JSReact.createElement(c, props, children: _*)
-
+    def createElement(
+      c: NativeComponentType.WithChildren[Nothing],
+      children: Seq[ReactNode]
+    ): ReactDOMElement =
+      JSReact.createElement(c, js.undefined, children: _*)
   }
 
   @js.native
@@ -160,16 +156,17 @@ package object react extends PropsImplicits {
 
     @JSName("createElement")
     override def apply(p: Props, children: ReactNode*): ReactDOMElement = {
-      val c = this.asInstanceOf[js.Dynamic].constructor
-      var props = implicitly[WrapToNative[P]].wrap(p).asInstanceOf[js.Dynamic]
-      this.key.map(props.key = _)
-      JSReact.createElement(c, props, children: _*)
+      var props = Wrapper[Wrapped, P].wrap(p).asInstanceOf[js.Dynamic]
+      this.key.foreach(props.key = _)
+
+      React.createElement(this, props.asInstanceOf[Wrapped[Props]], children)
     }
 
     @JSName("createElementNoProps")
     override def apply(children: ReactNode*): ReactDOMElement = {
+      // TODO: This is ugly and unsafe - switch to React.createElement
       val c = this.asInstanceOf[js.Dynamic].constructor
-      var props = js.Dynamic.literal(key = key)
+      val props = js.Dynamic.literal(key = key)
       JSReact.createElement(c, props, children: _*)
     }
 

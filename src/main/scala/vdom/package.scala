@@ -4,6 +4,8 @@ import scalajs.js
 
 package object vdom extends vdom.Events {
 
+  import scala.language.implicitConversions
+
   val Style = Attrs
 
   object prefix_<^ {

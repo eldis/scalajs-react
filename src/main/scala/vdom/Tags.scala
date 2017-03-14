@@ -8,7 +8,7 @@ class Tag(name: String, tagAttrs: List[Attrs] = Nil) {
   def apply(attrs: Attrs*)(children: ReactNode*): ReactDOMElement = React.createElement(
     name,
     Attrs.concat(tagAttrs ++ attrs).toJs,
-    children: _*
+    children
   )
 }
 
