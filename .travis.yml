@@ -6,11 +6,17 @@ scala:
   - 2.11.8
   - 2.12.1
 
+jdk:
+  - oraclejdk8
+
 env:
   - TRAVIS_NODE_VERSION="4"
 
-jdk:
-  - oraclejdk8
+install:
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+  - npm --version
+  - npm install -g npm@3
+  - npm --version
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION scalaJsReact/test scalaJsReactCompat/test 'exSimple/fastOptJS::webpack' 'exTodomvc/fastOptJS::webpack' 'exCompat/fastOptJS::webpack'
