@@ -70,6 +70,19 @@ package object react extends PropsImplicits {
     ): ReactDOMElement =
       JSReact.createElement(c, props, children: _*)
 
+    def createElement[P, F[_]](
+      c: NativeComponentType[F[P] with js.Any],
+      props: P
+    )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
+      createElement[wrapper.Out](c, wrapper.wrap(props))
+
+    def createElement[P, F[_]](
+      c: NativeComponentType.WithChildren[F[P] with js.Any],
+      props: P,
+      children: Seq[ReactNode]
+    )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
+      createElement[wrapper.Out](c, wrapper.wrap(props), children)
+
     // TODO: this is ugly - remove
     def createElement(
       c: NativeComponentType[Nothing]
