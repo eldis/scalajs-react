@@ -13,7 +13,7 @@ object MapProps {
       wrapper: Wrapper[F, A]
     ): FunctionalComponent[B] = {
       def worker(b: B): ReactNode = {
-        React.createElement[A, F](C(c), f(b))
+        React.createElement(C(c), f(b))
       }
       FunctionalComponent("MapProps")(worker)
     }
@@ -24,7 +24,7 @@ object MapProps {
       wrapper: Wrapper[F, A]
     ): FunctionalComponent.WithChildren[B] = {
       def worker(b: B, children: PropsChildren): ReactNode =
-        React.createElement[A, F](C(c), f(b), children)
+        React.createElement(C(c), f(b), children)
       FunctionalComponent.withChildren("MapProps")(worker)
     }
 
@@ -35,7 +35,7 @@ object MapProps {
       B: B <:< js.Any
     ): NativeFunctionalComponent[B] = {
       def worker(b: B): ReactNode =
-        React.createElement[A, F](C(c), f(b))
+        React.createElement(C(c), f(b))
       NativeFunctionalComponent("MapProps")(worker)
     }
 
@@ -46,7 +46,7 @@ object MapProps {
       B: B <:< js.Any
     ): NativeFunctionalComponent.WithChildren[B] = {
       def worker(b: B, children: PropsChildren): ReactNode =
-        React.createElement[A, F](C(c), f(b), children)
+        React.createElement(C(c), f(b), children)
       NativeFunctionalComponent.withChildren("MapProps")(worker)
     }
   }

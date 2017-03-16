@@ -62,11 +62,8 @@ abstract class ComponentBase[F[_], P](
 
   @JSName("createElement")
   def apply(p: Props, children: ReactNode*): ReactDOMElement = {
-
-    val props: F[P] = wrapper.wrap(p)
-    val c: NativeComponentType.WithChildren[F[P]] = this
     implicit val idWrapper = Wrapper.produceIdentity(wrapper)
-    React.createElement[F[P], Identity](c, props, children)
+    React.createElement(this, wrapper.wrap(p), children)
   }
 
   @JSName("createElementNoProps")

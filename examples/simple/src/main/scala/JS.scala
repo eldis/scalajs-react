@@ -22,6 +22,6 @@ object JS {
   @js.native
   object Component extends JSComponent[Props]
 
-  def apply(message: String) = React.createElement[Props, Identity](Component, Props(message))
+  def apply(message: String) = React.createElement(Component, Props(message))
 
 }

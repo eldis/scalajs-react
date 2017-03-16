@@ -34,8 +34,10 @@ object WithTypeclass {
 
   object StatefulComponent {
     def apply[T](p: WithTypeclass.Props[T])(implicit s: Show[T]): ReactDOMElement = {
-      React.createElement[PropsImpl[T], Wrapped](
-        implicitly[js.ConstructorTag[StatefulComponent[T]]],
+      val c: NativeComponentType[Wrapped[PropsImpl[T]]] =
+        implicitly[js.ConstructorTag[StatefulComponent[T]]]
+      React.createElement(
+        c,
         (p, s)
       )
     }
