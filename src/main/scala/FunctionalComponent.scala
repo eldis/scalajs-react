@@ -3,7 +3,7 @@ package eldis.react
 import scalajs.js
 
 @js.native
-trait FunctionalComponent[-P] extends js.Any
+trait FunctionalComponent[P] extends js.Any
 
 object FunctionalComponent {
 
@@ -17,12 +17,13 @@ object FunctionalComponent {
     apply("FunctionalComponent")(f)
 
   @inline implicit class FunctionalComponentOps[P](private val f: FunctionalComponent[P]) {
-    def withKey(key: js.Any)(p: P) = React.createElement(f, Wrapped(p, key))
-    def apply(p: P) = React.createElement(f, Wrapped(p))
+    def withKey(key: js.Any)(p: P) =
+      React.createElement(f, Wrapped(p, key))
+    def apply(p: P) = React.createElement(f, p)
   }
 
   @js.native
-  trait WithChildren[-P] extends js.Any
+  trait WithChildren[P] extends js.Any
 
   def withChildren[P](name: String)(f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] = {
     var proxy = ((p: Wrapped[P]) => {
@@ -51,23 +52,24 @@ object FunctionalComponent {
     c.asInstanceOf[NativeComponentType.WithChildren[Wrapped[P]]]
 
   @inline implicit class FunctionalComponentWithChildrenOps[P](private val f: WithChildren[P]) {
-    def withKey(key: js.Any)(p: P, ch: ReactNode*) = React.createElement(f, Wrapped(p, key), ch)
-    def apply(p: P, ch: ReactNode*) = React.createElement(f, Wrapped(p), ch)
+    def withKey(key: js.Any)(p: P, ch: ReactNode*) =
+      React.createElement(f, Wrapped(p, key), ch)
+    def apply(p: P, ch: ReactNode*) = React.createElement(f, p, ch)
   }
 
 }
 
 @js.native
-trait NativeFunctionalComponent[-P <: js.Any] extends js.Any
+trait NativeFunctionalComponent[P] extends js.Any
 
 object NativeFunctionalComponent {
-  def apply[P <: js.Any](name: String)(f: Function1[P, ReactNode]): NativeFunctionalComponent[P] = {
+  def apply[P](name: String)(f: Function1[P, ReactNode])(implicit ev: P <:< js.Any): NativeFunctionalComponent[P] = {
     var jf = f: js.Function1[P, ReactNode]
     jf.asInstanceOf[js.Dynamic].displayName = name
     jf.asInstanceOf[NativeFunctionalComponent[P]]
   }
 
-  def apply[P <: js.Any](f: Function1[P, ReactNode]): NativeFunctionalComponent[P] =
+  def apply[P](f: Function1[P, ReactNode])(implicit ev: P <:< js.Any): NativeFunctionalComponent[P] =
     apply("NativeFunctionalComponent")(f)
 
   @inline implicit class NativeFunctionalComponentOps[P <: js.Any](private val f: NativeFunctionalComponent[P]) {
@@ -75,9 +77,9 @@ object NativeFunctionalComponent {
   }
 
   @js.native
-  trait WithChildren[-P] extends js.Any
+  trait WithChildren[P] extends js.Any
 
-  def withChildren[P <: js.Any](name: String)(f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] = {
+  def withChildren[P](name: String)(f: Function2[P, PropsChildren, ReactNode])(implicit ev: P <:< js.Any): WithChildren[P] = {
     var proxy = ((p: P) => {
       val children = p.asInstanceOf[js.Dynamic].children.asInstanceOf[PropsChildren]
       f(p, if (js.Array.isArray(children)) children else js.Array(children.asInstanceOf[ReactNode]))
@@ -86,7 +88,7 @@ object NativeFunctionalComponent {
     proxy.asInstanceOf[WithChildren[P]]
   }
 
-  def withChildren[P <: js.Any](f: Function2[P, PropsChildren, ReactNode]): WithChildren[P] =
+  def withChildren[P](f: Function2[P, PropsChildren, ReactNode])(implicit ev: P <:< js.Any): WithChildren[P] =
     withChildren("NativeFunctionalComponent.withChildren")(f)
 
   import scala.language.implicitConversions
@@ -94,7 +96,7 @@ object NativeFunctionalComponent {
   @inline
   implicit def nativeFunctionalComponentIsNativeComponentType[P <: js.Any](
     c: NativeFunctionalComponent[P]
-  ): NativeComponentType[P] =
+  ): NativeComponentType[Identity[P]] =
     c.asInstanceOf[NativeComponentType[P]]
 
   @inline

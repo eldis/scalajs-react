@@ -6,6 +6,8 @@ import js.annotation._
 import js.|
 import org.scalajs.{ dom => jsdom }
 
+import eldis.react.util.{ UnapplyConstructor, ComponentLike }
+
 package object react extends PropsImplicits {
 
   import scala.language.implicitConversions
@@ -57,31 +59,35 @@ package object react extends PropsImplicits {
       children: Seq[ReactNode]
     ): ReactDOMElement = JSReact.createElement(tag, js.undefined, children: _*)
 
-    def createElement[P <: js.Any](
+    private def impl[P](
       c: NativeComponentType[P],
       props: P
-    ): ReactDOMElement =
+    )(ev: P <:< js.Any): ReactDOMElement =
       JSReact.createElement(c, props)
 
-    def createElement[P <: js.Any](
+    private def impl[P](
       c: NativeComponentType.WithChildren[P],
       props: P,
       children: Seq[ReactNode]
-    ): ReactDOMElement =
+    )(ev: P <:< js.Any): ReactDOMElement =
       JSReact.createElement(c, props, children: _*)
 
-    def createElement[P, F[_]](
-      c: NativeComponentType[F[P] with js.Any],
+    def createElement[P, F[_], FP](
+      c: NativeComponentType[FP],
       props: P
-    )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
-      createElement[wrapper.Out](c, wrapper.wrap(props))
+    )(implicit
+      unapply: UnapplyConstructor.Aux[FP, F, P],
+      wrapper: Wrapper[F, P]): ReactDOMElement =
+      impl[F[P]](unapply.inConstructor(c), wrapper.wrap(props))(wrapper.evidence)
 
-    def createElement[P, F[_]](
-      c: NativeComponentType.WithChildren[F[P] with js.Any],
+    def createElement[P, F[_], FP](
+      c: NativeComponentType.WithChildren[FP],
       props: P,
       children: Seq[ReactNode]
-    )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
-      createElement[wrapper.Out](c, wrapper.wrap(props), children)
+    )(implicit
+      unapply: UnapplyConstructor.Aux[FP, F, P],
+      wrapper: Wrapper[F, P]): ReactDOMElement =
+      impl[F[P]](unapply.inConstructor(c), wrapper.wrap(props), children)(wrapper.evidence)
 
     // TODO: this is ugly - remove
     def createElement(
@@ -159,7 +165,8 @@ package object react extends PropsImplicits {
       var props = Wrapper[Wrapped, P].wrap(p).asInstanceOf[js.Dynamic]
       this.key.foreach(props.key = _)
 
-      React.createElement(this, props.asInstanceOf[Wrapped[Props]], children)
+      val c: NativeComponentType.WithChildren[Wrapped[P]] = this
+      React.createElement(c, props.asInstanceOf[Wrapped[Props]], children)
     }
 
     @JSName("createElementNoProps")

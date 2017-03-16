@@ -10,7 +10,7 @@ import scalajs.js
  * props of type `P` and no children.
  */
 @js.native
-trait NativeComponentType[-P <: js.Any] extends js.Any
+trait NativeComponentType[P] extends js.Any
 
 object NativeComponentType {
   /**
@@ -21,5 +21,5 @@ object NativeComponentType {
    * props of type `P` and some children
    */
   @js.native
-  trait WithChildren[-P <: js.Any] extends NativeComponentType[P]
+  trait WithChildren[P] extends NativeComponentType[P]
 }
