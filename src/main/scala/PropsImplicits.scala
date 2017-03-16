@@ -9,26 +9,39 @@ trait PropsImplicits {
   type Identity[P] = P
 
   trait Wrapper[F[_], P] {
-    type Out = js.Any with F[P]
-    def wrap(v: P): Out
+
+    val evidence: F[P] <:< js.Any
+
+    def wrap(v: P): F[P]
     def unwrap(v: F[P]): P
   }
 
-  object Wrapper {
+  trait LowPriorityWrappers {
 
-    def apply[F[_], P](implicit w: Wrapper[F, P]): w.type = w
-
-    implicit def identityWrapper[P <: js.Any]: Wrapper[Identity, P] =
+    implicit def identityWrapper[P](implicit ev: P <:< js.Any): Wrapper[Identity, P] =
       new Wrapper[Identity, P] {
-        def wrap(v: P): Out = v
+        val evidence = ev
+
+        def wrap(v: P): Identity[P] = v
         def unwrap(v: Identity[P]): P = v
       }
+  }
+
+  object Wrapper extends LowPriorityWrappers {
+
+    def apply[F[_], P](implicit w: Wrapper[F, P]): Wrapper[F, P] = w
 
     implicit def wrappedWrapper[P]: Wrapper[Wrapped, P] =
       new Wrapper[Wrapped, P] {
-        def wrap(v: P): Out = Wrapped(v)
+
+        val evidence = implicitly[Wrapped[P] <:< js.Any]
+
+        def wrap(v: P): Wrapped[P] = Wrapped(v)
         def unwrap(v: Wrapped[P]): P = v.get
       }
+
+    def produceIdentity[F[_], P](
+      w: Wrapper[F, P]
+    ): Wrapper[Identity, F[P]] = identityWrapper[F[P]](w.evidence)
   }
 }
-

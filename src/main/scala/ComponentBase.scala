@@ -38,7 +38,6 @@ abstract class ComponentBase[F[_], P](
 ) extends RawComponent {
 
   type Props = P
-  type WrappedProps = js.Any with F[P]
 
   var stateInitialized = false
 
@@ -64,8 +63,10 @@ abstract class ComponentBase[F[_], P](
   @JSName("createElement")
   def apply(p: Props, children: ReactNode*): ReactDOMElement = {
 
-    val props: js.Any with F[P] = wrapper.wrap(p)
-    React.createElement(ComponentBase.componentBaseIsNativeComponentTypeWithChildren(this), props, children)
+    val props: F[P] = wrapper.wrap(p)
+    val c: NativeComponentType.WithChildren[F[P]] = this
+    implicit val idWrapper = Wrapper.produceIdentity(wrapper)
+    React.createElement[F[P], Identity](c, props, children)
   }
 
   @JSName("createElementNoProps")
@@ -129,15 +130,13 @@ object ComponentBase {
   @inline
   implicit def componentBaseIsNativeComponentTypeWithChildren[F[_], P](
     c: ComponentBase[F, P]
-  // TODO: ComponentBase wrapping synchronization
-  ): NativeComponentType.WithChildren[c.WrappedProps] =
+  ): NativeComponentType.WithChildren[F[P]] =
     c.asInstanceOf[js.Dynamic].constructor
-      .asInstanceOf[NativeComponentType.WithChildren[c.WrappedProps]]
+      .asInstanceOf[NativeComponentType.WithChildren[F[P]]]
 
   @inline
   implicit def componentBaseTagIsNativeComponentTypeWithChildren[F[_], P, C <: ComponentBase[F, P]](
     c: js.ConstructorTag[C]
-  // TODO: ComponentBase wrapping synchronization
-  ): NativeComponentType.WithChildren[C#WrappedProps] =
-    c.constructor.asInstanceOf[NativeComponentType.WithChildren[C#WrappedProps]]
+  ): NativeComponentType.WithChildren[F[P]] =
+    c.constructor.asInstanceOf[NativeComponentType.WithChildren[F[P]]]
 }

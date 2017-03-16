@@ -57,31 +57,31 @@ package object react extends PropsImplicits {
       children: Seq[ReactNode]
     ): ReactDOMElement = JSReact.createElement(tag, js.undefined, children: _*)
 
-    def createElement[P <: js.Any](
+    private def impl[P](
       c: NativeComponentType[P],
       props: P
-    ): ReactDOMElement =
+    )(implicit ev: P <:< js.Any): ReactDOMElement =
       JSReact.createElement(c, props)
 
-    def createElement[P <: js.Any](
+    private def impl[P](
       c: NativeComponentType.WithChildren[P],
       props: P,
       children: Seq[ReactNode]
-    ): ReactDOMElement =
+    )(implicit ev: P <:< js.Any): ReactDOMElement =
       JSReact.createElement(c, props, children: _*)
 
     def createElement[P, F[_]](
-      c: NativeComponentType[F[P] with js.Any],
+      c: NativeComponentType[F[P]],
       props: P
     )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
-      createElement[wrapper.Out](c, wrapper.wrap(props))
+      impl[F[P]](c, wrapper.wrap(props))(wrapper.evidence)
 
     def createElement[P, F[_]](
-      c: NativeComponentType.WithChildren[F[P] with js.Any],
+      c: NativeComponentType.WithChildren[F[P]],
       props: P,
       children: Seq[ReactNode]
     )(implicit wrapper: Wrapper[F, P]): ReactDOMElement =
-      createElement[wrapper.Out](c, wrapper.wrap(props), children)
+      impl[F[P]](c, wrapper.wrap(props), children)(wrapper.evidence)
 
     // TODO: this is ugly - remove
     def createElement(
@@ -159,7 +159,8 @@ package object react extends PropsImplicits {
       var props = Wrapper[Wrapped, P].wrap(p).asInstanceOf[js.Dynamic]
       this.key.foreach(props.key = _)
 
-      React.createElement(this, props.asInstanceOf[Wrapped[Props]], children)
+      val c: NativeComponentType.WithChildren[Wrapped[P]] = this
+      React.createElement[Wrapped[P], Identity](c, props.asInstanceOf[Wrapped[Props]], children)
     }
 
     @JSName("createElementNoProps")
