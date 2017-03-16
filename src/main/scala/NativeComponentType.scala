@@ -22,16 +22,4 @@ object NativeComponentType {
    */
   @js.native
   trait WithChildren[P] extends NativeComponentType[P]
-
-  object WithChildren {
-    implicit class Ops[A](val self: WithChildren[A]) extends AnyVal {
-      def narrow[B](implicit ev: B <:< A): WithChildren[B] =
-        self.asInstanceOf[WithChildren[B]]
-    }
-  }
-
-  implicit class Ops[A](val self: NativeComponentType[A]) extends AnyVal {
-    def narrow[B](implicit ev: B <:< A): NativeComponentType[B] =
-      self.asInstanceOf[NativeComponentType[B]]
-  }
 }
