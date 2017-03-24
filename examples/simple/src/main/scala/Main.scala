@@ -55,6 +55,11 @@ object Main extends js.JSApp {
           WithBuilder()
             .greeting("Hello again")
             .name("the same component")("with children")
+        ),
+        <.li()(
+          WithBuilder.withChildren("with children before props")
+            .greeting("And also")
+            .name("the one")
         )
       )
     )

@@ -25,13 +25,16 @@ object WithBuilder {
         )
     }
 
-  def apply(): ElementBuilder[component.type, Props] =
+  def apply(): ElementBuilder[component.type, Props, Unit] =
     ElementBuilder(component, Props())
 
-  implicit class BuilderOps(
-      val self: ElementBuilder[WithBuilder.component.type, Props]
+  def withChildren(children: ReactNode*): ElementBuilder[component.type, Props, Seq[ReactNode]] =
+    ElementBuilder(component, Props(), children)
+
+  implicit class BuilderOps[CH](
+      val self: ElementBuilder[WithBuilder.component.type, Props, CH]
   ) extends AnyVal {
-    def greeting(g: String) = self.map(_.copy(greeting = g))
-    def name(n: String) = self.map(_.copy(name = n))
+    def greeting(g: String) = self.mapProps(_.copy(greeting = g))
+    def name(n: String) = self.mapProps(_.copy(name = n))
   }
 }

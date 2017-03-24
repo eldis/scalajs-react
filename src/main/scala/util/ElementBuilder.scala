@@ -12,15 +12,21 @@ import eldis.react._
  *
  * C and P can be non-unique (e.g. if C is a FunctionalComponent) - if
  * this becomes an issue, use a tagged type as C.
+ *
+ * CH is generally assumed to either be a Unit or Seq[ReactNode], though
+ * other types are also an option (but not supported by default implicits)
  */
-final case class ElementBuilder[C, P](
+final case class ElementBuilder[C, P, CH](
   component: C,
-  props: P
+  props: P,
+  children: CH = ()
 )
 
 object ElementBuilder {
 
-  implicit def builderToReactNode[C, P, F[_], FP](self: ElementBuilder[C, P])(
+  implicit def unitBuilderToReactNode[C, P, F[_], FP](
+    self: ElementBuilder[C, P, Unit]
+  )(
     implicit
     ev: C => NativeComponentType[FP],
     unapply: UnapplyConstructor.Aux[FP, F, P],
@@ -28,17 +34,25 @@ object ElementBuilder {
   ): ReactDOMElement =
     React.createElement(ev(self.component), self.props)
 
-  implicit class Ops[C, P](val self: ElementBuilder[C, P]) extends AnyVal {
+  implicit def childrenBuilderToReactNode[C, P, F[_], FP](
+    self: ElementBuilder[C, P, Seq[ReactNode]]
+  )(
+    implicit
+    ev: C => NativeComponentType.WithChildren[FP],
+    unapply: UnapplyConstructor.Aux[FP, F, P],
+    wrapper: Wrapper[F, P]
+  ): ReactDOMElement =
+    React.createElement(ev(self.component), self.props, self.children)
 
-    def apply[F[_], FP](
+  implicit class Ops[C, P, CH](val self: ElementBuilder[C, P, CH]) extends AnyVal {
+
+    def apply(
       children: ReactNode*
-    )(implicit
-      ev: C => NativeComponentType.WithChildren[FP],
-      unapply: UnapplyConstructor.Aux[FP, F, P],
-      wrapper: Wrapper[F, P]): ReactDOMElement =
-      React.createElement(ev(self.component), self.props, children)
+    )(implicit ev: CH =:= Unit): ElementBuilder[C, P, Seq[ReactNode]] =
+      // We only transform builder to ReactNode implicitly!
+      ElementBuilder(self.component, self.props, children)
 
-    def map[X](f: P => X): ElementBuilder[C, X] =
-      ElementBuilder(self.component, f(self.props))
+    def mapProps[X](f: P => X): ElementBuilder[C, X, CH] =
+      ElementBuilder(self.component, f(self.props), self.children)
   }
 }
