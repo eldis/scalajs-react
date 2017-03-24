@@ -47,6 +47,15 @@ object Main extends js.JSApp {
           Mapped.ExampleProps("For an object"),
           <.span("style" := Style("color" := "green"))("with children")
         ))
+      ),
+      <.h4()("Here is an example of component using ComponentBuilder for syntax:"),
+      <.ul()(
+        <.li()(WithBuilder().name("a component with builder syntax")),
+        <.li()(
+          WithBuilder()
+            .greeting("Hello again")
+            .name("the same component")("with children")
+        )
       )
     )
   }
