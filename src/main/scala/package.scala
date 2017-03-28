@@ -133,7 +133,7 @@ package object react extends PropsImplicits {
 
   // Wrapper object for scalajs properties
   @js.native
-  trait Wrapped[T] extends js.Any {
+  trait Wrapped[T] extends js.Object {
     @JSName("sjs_p")
     val get: T = js.native
     val key: js.UndefOr[js.Any] = js.native
