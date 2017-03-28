@@ -2,11 +2,12 @@ package eldis
 
 import scala.reflect.ClassTag
 import scalajs.js
+import scalajs.js.JSConverters.genTravConvertible2JSRichGenTrav
+
 import js.annotation._
 import js.|
 import org.scalajs.{ dom => jsdom }
-
-import eldis.react.util.{ UnapplyConstructor, ComponentLike }
+import eldis.react.util.{ ComponentLike, UnapplyConstructor }
 
 package object react extends PropsImplicits {
 
@@ -130,6 +131,7 @@ package object react extends PropsImplicits {
   // Implicits
   @inline implicit def reactNodeFromString(s: String) = s.asInstanceOf[ReactNode]
   @inline implicit def reactNodeFromNodeArray(a: js.Array[ReactNode]) = a.asInstanceOf[ReactNode]
+  @inline implicit def reactNodeFromNodeSeq(a: Seq[ReactNode]): ReactNode = a.toJSArray
 
   // Wrapper object for scalajs properties
   @js.native
