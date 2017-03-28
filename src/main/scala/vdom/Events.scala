@@ -13,9 +13,11 @@ trait Events {
 
   type ReactEvent = SyntheticEvent[dom.Node]
   type ReactKeyboardEvent = SyntheticKeyboardEvent[dom.Node]
+  type ReactMouseEvent = SyntheticMouseEvent[dom.Node]
 
   type ReactEventI = SyntheticEvent[html.Input]
   type ReactKeyboardEventI = SyntheticKeyboardEvent[html.Input]
+  type ReactMouseEventI = SyntheticMouseEvent[html.Input]
 
 }
 
@@ -59,4 +61,22 @@ trait SyntheticKeyboardEvent[+DOMEventTarget <: dom.Node] extends SyntheticUIEve
   val charCode: Int = js.native
   val keyCode: Int = js.native
   val which: Int = js.native
+}
+
+@js.native
+trait SyntheticMouseEvent[+DOMEventTarget <: dom.Node] extends SyntheticUIEvent[DOMEventTarget] {
+  override val nativeEvent: dom.KeyboardEvent = js.native
+  val altKey: Boolean = js.native
+  val button: Int = js.native
+  val buttons: Int = js.native
+  val clientX: Int = js.native
+  val clientY: Int = js.native
+  val ctrlKey: Boolean = js.native
+  val metaKey: Boolean = js.native
+  val pageX: Int = js.native
+  val pageY: Int = js.native
+  val relatedTarget: DOMEventTarget = js.native
+  val screenX: Int = js.native
+  val screenY: Int = js.native
+  val shiftKey: Boolean = js.native
 }
