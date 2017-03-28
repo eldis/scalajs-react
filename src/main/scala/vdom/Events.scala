@@ -65,18 +65,19 @@ trait SyntheticKeyboardEvent[+DOMEventTarget <: dom.Node] extends SyntheticUIEve
 
 @js.native
 trait SyntheticMouseEvent[+DOMEventTarget <: dom.Node] extends SyntheticUIEvent[DOMEventTarget] {
-  override val nativeEvent: dom.KeyboardEvent = js.native
-  val altKey: Boolean = js.native
-  val button: Int = js.native
-  val buttons: Int = js.native
-  val clientX: Int = js.native
-  val clientY: Int = js.native
+  override val nativeEvent: dom.MouseEvent = js.native
   val ctrlKey: Boolean = js.native
-  val metaKey: Boolean = js.native
-  val pageX: Int = js.native
-  val pageY: Int = js.native
-  val relatedTarget: DOMEventTarget = js.native
-  val screenX: Int = js.native
-  val screenY: Int = js.native
   val shiftKey: Boolean = js.native
+  val altKey: Boolean = js.native
+  val metaKey: Boolean = js.native
+  val button: Short = js.native
+  val buttons: Short = js.native
+  val clientX: Double = js.native
+  val clientY: Double = js.native
+  val pageX: Double = js.native
+  val pageY: Double = js.native
+  val screenX: Double = js.native
+  val screenY: Double = js.native
+  val relatedTarget: DOMEventTarget = js.native
+  def getModifierState(keyArg: String): Boolean = js.native
 }
