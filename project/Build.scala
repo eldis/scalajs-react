@@ -4,6 +4,9 @@ import org.scalajs.sbtplugin.ScalaJSPlugin
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 import scalajsbundler.sbtplugin.ScalaJSBundlerPlugin
 import scalajsbundler.sbtplugin.ScalaJSBundlerPlugin.autoImport._
+import sbtnexustasks.SbtNexusTasksPlugin
+import sbtnexustasks.SbtNexusTasksPlugin.autoImport._
+import com.typesafe.sbt.SbtPgp.autoImport._
 
 object ScalaJSReact {
 
@@ -97,14 +100,20 @@ object ScalaJSReact {
       }
 
     def publish: PC =
-      _.settings(
-        publishMavenStyle := true,
-        publishTo := {
-          val nexus = "https://oss.sonatype.org/"
-          if (isSnapshot.value)
-            Some("snapshots" at nexus + "content/repositories/snapshots")
-          else
-            Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+      _.enablePlugins(SbtNexusTasksPlugin)
+        .settings(
+          publishMavenStyle := true,
+          publishTo := {
+            val nexus = "https://oss.sonatype.org/"
+            if (isSnapshot.value)
+              Some("snapshots" at nexus + "content/repositories/snapshots")
+            else
+              Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+          },
+
+        PgpKeys.publishSigned := {
+          nexusExpireProxyCache.in(Compile)
+            .dependsOn(PgpKeys.publishSigned).value
         }
       )
   }
